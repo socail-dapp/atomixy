@@ -1,4 +1,5 @@
 import create from "zustand";
+import store from "store";
 
 const useStore = create((set, get) => {
   return {
@@ -10,13 +11,20 @@ const useStore = create((set, get) => {
     resetNodeWindow: () => set({ currentNodeWindow: null }),
 
     //
-    currentFlows: [],
-    addFlow: (value) =>
-      set(({ currentFlows }) => ({ currentFlows: currentFlows.concat(value) })),
+    currentFlow: {},
+    addFlow: (value) => set({ currentFlow: value }),
+    //add it to storage? so when createion and left, can retrace prev-works
 
+    //
     lock: false,
     setLock: () => set({ lock: false }),
     setUnlock: () => set({ lock: true }),
+
+    // modal
+    Component: null,
+    showModal: (value) => set({ Component: value }),
+    closeModal: () => set({ Component: null }),
+
     //
     router: {},
     user: null,

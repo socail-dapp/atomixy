@@ -1,8 +1,8 @@
 module.exports = {
   purge: ["./src/pages/**/*", "./src/components/**/*"],
-  content: ["./node_modules/flowbite/**/*.js"],
+  content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {},
   },
-  plugins: [require("flowbite/plugin")],
+  plugins: [],
 };

@@ -1,46 +1,28 @@
-import React, { useState } from 'react'
-import store from "store"
-import useStore from '@/helpers/store'
-import NodeWindow from '../window/NodeWindow'
+import React, { useState } from "react";
+// import store from "store"
+import useStore from "@/helpers/store";
+import NodeWindow from "../window/NodeWindow";
+// import cookieCutter from 'cookie-cutter'
 
-export default function ({ viewOnly, elements, setElements, addFlow, currentFlows = [] }) {
-    const [showWindow, setShowWindow] = useState(null)
-    if (!viewOnly) return null
+export default function ({ viewOnly, elements, setElements }) {
+    const [showWindow, setShowWindow] = useState(null);
+    if (!viewOnly) return null;
 
     return (
         <>
-            <div className='absolute modal border z-10 p-10'>
-                {/* float nodes edit tool */}
-                <button
-                    // if already shown, dont?
-                    onClick={() => setShowWindow(true)}
-                >Add node</button>
-                {/* show window with clear state  */}
-            </div>
+            <button
+                className="absolute  z-10 p-5 rounded-md m-3  text-gray-50 bg-gradient-to-r from-gray-500 to-zinc-400"
+                // if already shown, dont?
+                onClick={() => setShowWindow(true)}
+            >
+                Add Node
+            </button>
 
-            {/* todo: move to locked control */}
-            <div className='absolute modal border z-10 p-10 bottom-0 right-1/2'>
-                <button
-                    onClick={() => {
-                        const payloadFlow = {
-                            title: 'coba flow: ' + currentFlows.length,
-                            elements,
-                        }
-                        // do transactions here
-                        addFlow(payloadFlow)
-                        store.set('flows', payloadFlow)
-                        alert("Success add ? or Save?")
-                        // router.push(`/`)
-                        //
-                    }}
-                >Create/Save The Flow</button>
-            </div>
-            <div className='absolute modal border bottom-0 '>
-                length changes
-            </div>
+
+            {/* <div className="absolute modal border bottom-0 ">length changes</div> */}
 
             {/* todo: dialog or modal for  */}
-            {showWindow &&
+            {showWindow && (
                 <NodeWindow
                     {...{
                         setElements,
@@ -48,7 +30,7 @@ export default function ({ viewOnly, elements, setElements, addFlow, currentFlow
                         // openWindowNode
                     }}
                 />
-            }
+            )}
         </>
-    )
+    );
 }

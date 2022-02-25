@@ -1,27 +1,30 @@
-import useStore from '@/helpers/store'
+import useStore from "@/helpers/store";
 
 // id to remove the node
 
-const NodeCapsule = ({ detail, id }) => {
-    const { addNodeWindow } = useStore();
+const NodeCapsule = ({ detail, id, position }) => {
+  const { addNodeWindow } = useStore();
 
-    return (
-        <div
-            onClick={() => {
-                console.log('click node')
-                addNodeWindow({ ...detail, id })
-            }}
-            //missing the position too?
-            style={{
-                background: '#03dac6',
-                // width: 300,
-                // height: 200,
-                color: 'white',
-                padding: '2%'
-            }}>
-            {detail.title}
-        </div>
-    )
-}
+  return (
+    <div
+      onClick={() => {
+        console.log("click node");
+        addNodeWindow({ ...detail, id, position });
+      }}
+      //missing the position too?
+      style={{
+        background: detail?.colorBg,
+        // width: 300,
+        // height: 200,
+        // color: detail?.colorText,
+        padding: "2%",
+        border: `0px`
+      }}
+    >
+      {detail.titleCapsule}
+      {/* {id} */}
+    </div>
+  );
+};
 
-export default NodeCapsule
+export default NodeCapsule;
