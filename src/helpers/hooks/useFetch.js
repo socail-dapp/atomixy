@@ -20,7 +20,7 @@ export default function useFetch() {
         const value = await store.get("flows");
         setData(value);
         addFlow(value);
-        setVersion(value?.versions[0]);
+        setVersion(value?.currentVersion);
 
         setLoading(false);
       } catch (error) {

@@ -1,16 +1,16 @@
 <div >
     {/* confirmation close */}
-    <button className="absolute right-10" onClick={onClose}>
+    {/* <button className="absolute right-10" onClick={onClose}>
         close
     </button>
     {currentDetail && (
         <button className="absolute " onClick={onRemove}>
             delete node
         </button>
-    )}
+    )} */}
     {/* NESTED EDITING: between owner and others */}
     <br />
-    <div className="p-5">
+    {/* <div className="p-5">
         <Input
             key="title"
             label="Title"
@@ -26,7 +26,7 @@
             value={detail.description}
             onChange={(description) => setDetail({ ...detail, description })}
         />
-    </div>
+    </div> */}
     <div>
         ROW for Links:
         <br />

@@ -2,7 +2,10 @@ import useDialog from '@/helpers/store/useDialog'
 import { Dialog, Transition } from '@headlessui/react'
 import { Fragment, useState } from 'react'
 
-export default function ModalDialog({ onConfirm, title, desc, confirmText = 'Confirm' }) {
+export default function ModalDialog({
+    onClose,
+    isOpened,
+    onConfirm, title, desc, confirmText = 'Confirm', children, hasChildren = false }) {
     //   let [isOpen, setIsOpen] = useState(true)
 
     //   function closeModal() {
@@ -14,13 +17,13 @@ export default function ModalDialog({ onConfirm, title, desc, confirmText = 'Con
     //   }
 
     const { isOpen, openModal, closeModal, } = useDialog()
-
+    console.log(isOpened, 'isopened?')
     return (
-        <Transition appear show={isOpen} as={Fragment}>
+        <Transition appear show={isOpened} as={Fragment}>
             <Dialog
                 as="div"
                 className="fixed inset-0 z-10 overflow-y-auto backdrop-blur-md"
-                onClose={closeModal}
+                onClose={onClose}
             >
                 <div className="min-h-screen px-4 text-center">
                     <Transition.Child
@@ -63,12 +66,13 @@ export default function ModalDialog({ onConfirm, title, desc, confirmText = 'Con
                                     {desc}
                                 </p>
                             </div>
-
+                            {hasChildren && children}
                             <div className="mt-4 flex row w-full">
                                 <button
                                     type="button"
                                     className="inline-flex mr-5 justify-center px-4 py-2 text-sm font-medium text-white bg-rose-400 border border-transparent rounded-md"
-                                    onClick={closeModal}
+                                    onClick={onClose}
+
                                 >
                                     Cancel
                                 </button>

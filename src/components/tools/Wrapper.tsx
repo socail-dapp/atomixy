@@ -33,7 +33,6 @@ export default ({
     const elems = useMemo(
         () =>
             data?.elements?.map((item) => {
-
                 if (!!item.data?.label) {
                     const { data, detail, ...restItem } = item;
                     // console.log(item?.id) // bug: DONT desctructure id
@@ -41,7 +40,7 @@ export default ({
                         ...restItem,
                         detail, // dont forget to  pass for future references/update
                         data: {
-                            label: <NodeCapsule {...{ detail, id: item?.id }} />,
+                            label: <NodeCapsule {...{ detail, id: item?.id, position: item?.position }} />,
                         },
                     };
                 } else return item;
@@ -80,17 +79,21 @@ export default ({
     console.log(currentSource, elements, "elements WRAPPER", editStatus);
 
     return (
-        <div className={lock ? `border` : ``}>
+        <div className={lock ? `` : ``}>
             {/* header with title data:? from serversideprops */}
             {/* todo: float nodes */}
-            {!isCreate && (
+            {/* {!isCreate && (
                 <div className="absolute modal border z-10 right-0">
                     Version Update click here
                 </div>
-            )}
+            )} */}
             {lock && (
-                <div className="absolute modal border z-10 right-1/2">
-                    FREEZE MODE OFF : you can drag and connecting the node
+                <div className="absolute z-10 w-full">
+                    <div className="flex justify-center align-middle ">
+                        <div className=" bg-gray-300  px-4 text-xs text-white bg-opacity-20 text-opacity-50">
+                            FREEZE OFF, you can drag and connect the node
+                        </div>
+                    </div>
                 </div>
             )}
 

@@ -36,6 +36,9 @@ const NodeWindow = ({
   currentSource = [],
   isCreate = false
 }: any) => {
+  console.log(currentDetail, 'currentDetailcurrentDetail')
+
+
   const { setEditWindow } = useWindow()
   useEffect(() => {
     setEditWindow(false)
@@ -78,7 +81,7 @@ const NodeWindow = ({
     const isUpdating = currentDetail?.id
     const id = isUpdating ? currentDetail?.id : `rn-${getNodeId()}`;
 
-    const position = currentDetail?.position ? currentDetail?.position : {
+    const position = !!currentDetail?.position ? currentDetail?.position : {
       x: Math.random() * window.innerWidth / 2,
       y: Math.random() * window.innerHeight / 2,
     }
@@ -134,7 +137,7 @@ const NodeWindow = ({
   );
   const { tabs } = useWindow()
   return (
-    <div className={`absolute p-3 w-full md:w-1/2 h-full z-10 right-0  ${edit && `border-green-400`
+    <div className={`absolute p-3 w-full md:w-1/2 h-full z-30 right-0  ${edit && `border-green-400`
       }`}>
 
       <div className={`

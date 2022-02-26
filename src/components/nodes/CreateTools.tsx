@@ -11,7 +11,7 @@ export default function ({ viewOnly, elements, setElements }) {
     return (
         <>
             <button
-                className="absolute  z-10 p-5 rounded-md m-3  text-gray-50 bg-gradient-to-r from-gray-500 to-zinc-400"
+                className="absolute z-20 p-5 rounded-md m-3  text-gray-50 bg-gradient-to-r from-gray-500 to-zinc-400"
                 // if already shown, dont?
                 onClick={() => setShowWindow(true)}
             >

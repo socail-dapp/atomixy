@@ -7,7 +7,9 @@
 }
 
 .has-tooltip:hover .tooltip {
-  @apply visible z-50
+  @apply visible ;
+  z-index: 999;
+  white-space: nowrap;
 }
 
 
