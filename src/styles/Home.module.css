@@ -1,6 +1,12 @@
 .container {
   padding: 0 2rem;
 }
+.walletButtons {
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 2rem;
+}
+
 
 .main {
   min-height: 100vh;

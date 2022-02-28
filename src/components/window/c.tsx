@@ -1,6 +1,6 @@
-<div >
-    {/* confirmation close */}
-    {/* <button className="absolute right-10" onClick={onClose}>
+<div>
+  {/* confirmation close */}
+  {/* <button className="absolute right-10" onClick={onClose}>
         close
     </button>
     {currentDetail && (
@@ -8,9 +8,9 @@
             delete node
         </button>
     )} */}
-    {/* NESTED EDITING: between owner and others */}
-    <br />
-    {/* <div className="p-5">
+  {/* NESTED EDITING: between owner and others */}
+  <br />
+  {/* <div className="p-5">
         <Input
             key="title"
             label="Title"
@@ -27,56 +27,56 @@
             onChange={(description) => setDetail({ ...detail, description })}
         />
     </div> */}
-    <div>
-        ROW for Links:
-        <br />
-        {sourceLink.map((item, i) => {
-            if (item?.source === currentDetail?.id) {
-                return (
-                    <>
-                        <button onClick={() => onRemoveLink(item?.id)} className="my-2">
-                            unlink for {item?.target}{" "}
-                        </button>
-                        <br />
-                    </>
-                );
-            } else {
-                return (
-                    <>
-                        <button
-                            onClick={() => onRemoveLink(item?.id)}
-                            className="my-2 bg-green-400"
-                        >
-                            unlink from {item?.target}{" "}
-                        </button>
-                        <br />
-                    </>
-                );
-            }
-        })}
-    </div>
-    {/* directly submit to call contract? or add to store */}
-    {!canEdit && (
-        <button
-            className="absolute right-10"
-            onClick={() => {
-                //fetch to contract?
-                onAdd();
-            }}
-        >
-            SUBMIT
-        </button>
-    )}
-    {/* ifOwner can EDIT -> create, view -> */}
-    {isOwner && !edit && (
-        <button
-            className="absolute right-10"
-            onClick={() => {
-                setEdit(true);
-            }}
-        >
-            EDIT
-        </button>
-    )}
-    {/* delete elements */}
-</div>
+  <div>
+    ROW for Links:
+    <br />
+    {sourceLink.map((item, i) => {
+      if (item?.source === currentDetail?.id) {
+        return (
+          <>
+            <button onClick={() => onRemoveLink(item?.id)} className="my-2">
+              unlink for {item?.target}{" "}
+            </button>
+            <br />
+          </>
+        );
+      } else {
+        return (
+          <>
+            <button
+              onClick={() => onRemoveLink(item?.id)}
+              className="my-2 bg-green-400"
+            >
+              unlink from {item?.target}{" "}
+            </button>
+            <br />
+          </>
+        );
+      }
+    })}
+  </div>
+  {/* directly submit to call contract? or add to store */}
+  {!canEdit && (
+    <button
+      className="absolute right-10"
+      onClick={() => {
+        //fetch to contract?
+        onAdd();
+      }}
+    >
+      SUBMIT
+    </button>
+  )}
+  {/* ifOwner can EDIT -> create, view -> */}
+  {isOwner && !edit && (
+    <button
+      className="absolute right-10"
+      onClick={() => {
+        setEdit(true);
+      }}
+    >
+      EDIT
+    </button>
+  )}
+  {/* delete elements */}
+</div>;

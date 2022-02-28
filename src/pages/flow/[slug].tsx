@@ -54,13 +54,9 @@ export default ({ cookies }) => {
         <div className="backdrop-blur-sm  text-3xl z-30 absolute w-full h-full cursor-wait grid place-items-center text-white">
           loading...
         </div>
-      )} 
+      )}
 
-
-        <Wrapper
-          {...{ data: selectedVersion, isEdit: false, isCreate: false }}
-        />
-
+      <Wrapper {...{ data: selectedVersion, isEdit: false, isCreate: false }} />
     </div>
   );
 };

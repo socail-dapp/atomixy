@@ -4,7 +4,6 @@ export interface IDetailNode {
   titleCapsule: string | null;
   colorBg: string | null;
   colorText: string | null;
-
 }
 
 export interface ICommit {

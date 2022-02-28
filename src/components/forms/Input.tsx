@@ -1,4 +1,12 @@
-const Input = ({ label, id, value, onChange, Error, isArea = false, ...props }) => {
+const Input = ({
+  label,
+  id,
+  value,
+  onChange,
+  Error,
+  isArea = false,
+  ...props
+}) => {
   return (
     <div>
       {label && (
@@ -7,7 +15,7 @@ const Input = ({ label, id, value, onChange, Error, isArea = false, ...props }) 
         </label>
       )}
       <div className="mt-1">
-        {isArea ?
+        {isArea ? (
           <textarea
             id={id}
             name={id}
@@ -17,7 +25,8 @@ const Input = ({ label, id, value, onChange, Error, isArea = false, ...props }) 
             onChange={(e) => onChange(e.target.value)}
             {...props}
           />
-          : <input
+        ) : (
+          <input
             id={id}
             name={id}
             type="text"
@@ -25,7 +34,8 @@ const Input = ({ label, id, value, onChange, Error, isArea = false, ...props }) 
             value={value}
             onChange={(e) => onChange(e.target.value)}
             {...props}
-          />}
+          />
+        )}
       </div>
       {Error && <Error />}
     </div>

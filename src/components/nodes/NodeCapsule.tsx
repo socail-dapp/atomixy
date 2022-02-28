@@ -18,7 +18,7 @@ const NodeCapsule = ({ detail, id, position }) => {
         // height: 200,
         // color: detail?.colorText,
         padding: "2%",
-        border: `0px`
+        border: `0px`,
       }}
     >
       {detail.titleCapsule}
