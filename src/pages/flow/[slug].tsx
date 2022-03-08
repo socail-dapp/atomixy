@@ -2,161 +2,221 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import useFetch from "@/helpers/hooks/useFetch";
 import Wrapper from "@/components/tools/Wrapper";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ICommit } from "@/helpers/types";
 import useWallet from "@/helpers/hooks/useWallet";
 import moment from "moment";
 import store from "store";
 import ButtonVersions from "@/components/versions/ButtonVersions";
+import useSWR, { SWRConfig } from "swr";
+import axios from "axios";
+import useFlow from "@/helpers/store/useFlow";
+import ReactSplit, { SplitDirection } from "@devbookhq/splitter";
+import { HeaderWallet } from "@/components/Layout";
+import ToolTip from "@/components/ToolTip";
 
-export default ({ cookies }) => {
-  const { data, loading, setVersion, selectedVersion } = useFetch();
+const fetcher = (url) => axios.get(url).then((res) => res.data);
 
-  console.log(data, loading, "usefecttcch in slug");
-  const [expandVersion, setExpandVersion] = useState(false);
-  //ONLY SHOWS THE CURRENT ONE
+export async function getServerSideProps({ query: { slug, key } }) {
+  // 1. load from ipfs
+  // ??: also load directly to provider ? optional?
+  try {
+    const dataFlow = await fetcher(`https://ipfs.io/ipfs/${slug}`);
+    console.log(`this is key ${key}`);
+    return {
+      props: {
+        slug,
+        keyContract: key,
+        chainId: 31337,
+        fallback: {
+          [slug]: dataFlow,
+        },
+      },
+    };
+  } catch (error) {
+    return {
+      props: {
+        isError: true,
+      },
+    };
+  }
+}
+
+export default ({ fallback, slug, keyContract, isError = false }) => {
+  //useFetch(network?)
+
+  // 1. inform user to change network ? (check network from data must be same with network wallet)
+  // 2.
+
+  const { setVersion, selectedVersion, loading } = useFetch(slug);
+
+  /**
+   * clarify if key is same ?
+   */
+  const { setKey } = useFlow();
+  useEffect(() => {
+    setKey(keyContract);
+  }, []);
+
+  if (isError) {
+    return <div>404 data is broken</div>;
+  }
 
   return (
-    <div className="w-full h-full">
-      {/* <div className="absolute">
+    <SWRConfig value={{ fallback }}>
+      <div className="w-full h-full">
+        {/* <div className="absolute">
         information to click (authority: current version)
       </div> */}
-      <div className="absolute  w-full z-20">
-        <ButtonVersions
-          {...{
-            selectedVersion,
-            // data,
-            onChange: (v) => setVersion(v),
-          }}
-        />
-      </div>
-      {/* <div className="absolute modal border p-3 bg-amber-200  z-50 right-1/2">
-        <button
-          onClick={() => {
-            console.log("expand click");
-            setExpandVersion(!expandVersion);
-          }}
-        >
-          Versions click: currentVersion {selectedVersion?.sequence}
-        </button>
+        <div className="absolute w-screen flex row justify-between z-10 ">
+          {/* dont remove to balance the space-between of 3 items */}
+          <div />
+          <HeaderWallet minimize />
 
-        {expandVersion && (
-          <VersionTab
+          <ButtonVersions
             {...{
-              data,
+              selectedVersion,
+              keyContract,
+              // data,
               onChange: (v) => setVersion(v),
             }}
           />
-        )}
-      </div> */}
-
-      {loading && (
-        <div className="backdrop-blur-sm  text-3xl z-30 absolute w-full h-full cursor-wait grid place-items-center text-white">
-          loading...
         </div>
-      )}
 
-      <Wrapper {...{ data: selectedVersion, isEdit: false, isCreate: false }} />
-    </div>
+        {loading && (
+          <div className="backdrop-blur-sm  text-3xl z-30 absolute w-full h-full cursor-wait grid place-items-center text-white">
+            loading...
+          </div>
+        )}
+
+        <div className="w-screen h-screen absolute">
+          <HorizontalSplit>
+            <Wrapper
+              {...{
+                data: selectedVersion,
+                isEdit: false,
+                isCreate: false,
+                keyContract,
+              }}
+            />
+          </HorizontalSplit>
+        </div>
+      </div>
+    </SWRConfig>
   );
 };
 
-// const VersionTab = ({ data, onChange }) => {
-//   const { data: dataWallet } = useWallet();
+function HorizontalSplit({ children }: any) {
+  const [currArr, setCurrArr] = useState([100]);
 
-//   // item as currentFlow
-//   const onApprove = async (item: ICommit) => {
-//     //show modal -> approving this flow as a main?
-//     //transaction
-//     // if current is already matched-> cannot add
+  return (
+    <ReactSplit initialSizes={currArr}>
+      {currArr?.map((item, i) => (
+        <VerticalSplit
+          parentArr={currArr.length}
+          onParent={() => {
+            if (currArr?.length === 1) {
+              setCurrArr([50, 50]);
+            } else if (currArr?.length === 2) {
+              // setCurrArr([50, 25, 25])
+              setCurrArr([100]);
+              //and check current i
+            }
+          }}
+          key={i}
+        >
+          {children}
+        </VerticalSplit>
+      ))}
+    </ReactSplit>
+  );
+}
 
-//     const ACCOUNT = dataWallet?.accountId;
+function VerticalSplit({ onParent, parentArr, children }: any) {
+  const [currArr, setCurrArr] = useState([100]);
 
-//     const approvedCommit = {
-//       ...item,
-//       approvedBy: ACCOUNT,
-//       approvedAt: moment().unix(),
-//     };
+  return (
+    <ReactSplit initialSizes={currArr} direction={SplitDirection.Vertical}>
+      {currArr?.map((item, i) => (
+        <div className="absolute h-full w-full ">
+          <div
+            className="absolute m-2 flex row gap-2 right-3/4 z-10  cursor-pointer"
+            key={i}
+          >
+            {parentArr === 2 && currArr?.length === 1 && (
+              <div className="has-tooltip">
+                <VertiIcon
+                  onClick={() => {
+                    if (currArr?.length === 1) {
+                      setCurrArr([50, 50]);
+                    } else if (currArr?.length === 2) {
+                      setCurrArr([100]);
+                      //and check current i
+                    }
+                  }}
+                />
+                <ToolTip>Open Vertical</ToolTip>
+              </div>
+            )}
+            {currArr.length === 2 && (
+              <div className="has-tooltip">
+                <VertiIcon
+                  color="red"
+                  onClick={() => {
+                    setCurrArr([100]);
+                  }}
+                />
+                <ToolTip>Close Vertical</ToolTip>
+              </div>
+            )}
 
-//     // add approved commit to main versions track
-//     const versions = data?.versions;
-//     versions.unshift(approvedCommit);
+            {parentArr === 1 ? (
+              <div className="has-tooltip">
+                <HoriIcon
+                  //icon copy horizontal
+                  onClick={onParent}
+                />
+                <ToolTip>Open Horizontal</ToolTip>
+              </div>
+            ) : (
+              <div className="has-tooltip">
+                <HoriIcon onClick={onParent} color="red" />
+                <ToolTip>Close Horizontal</ToolTip>
+              </div>
+            )}
+            {(parentArr > 1 || currArr.length > 1) && (
+              <div className="text-white text-sm">experimental</div>
+            )}
+          </div>
+          {children}
+        </div>
+      ))}
+    </ReactSplit>
+  );
+}
 
-//     const payloadFlow = {
-//       ...data,
-//       currentVersion: approvedCommit,
-//       updatedBy: ACCOUNT,
-//       updatedAt: moment().unix(),
-//       sequence: item?.sequence,
-//       versions,
-//     };
+const HoriIcon = ({ onClick, color = "white" }) => (
+  <svg
+    onClick={onClick}
+    xmlns="http://www.w3.org/2000/svg"
+    className="h-7 w-7"
+    viewBox="0 0 20 20"
+    fill={color}
+  >
+    <path d="M7 9a2 2 0 012-2h6a2 2 0 012 2v6a2 2 0 01-2 2H9a2 2 0 01-2-2V9z" />
+    <path d="M5 3a2 2 0 00-2 2v6a2 2 0 002 2V5h8a2 2 0 00-2-2H5z" />
+  </svg>
+);
 
-//     try {
-//       await store.set("flows", payloadFlow);
-//       alert("Success approving new version");
-//     } catch (error) {
-//       console.log(error);
-//     }
-//   };
-
-//   return (
-//     <div className="bg-blue-300">
-//       {/* <div>current version: {data?.sequence}
-//                 &nbsp;  &nbsp;
-//                 {<button
-//                     onClick={() => onChange(data?.currentSource)}
-//                 >Change to this version</button>}
-//             </div> */}
-//       <br />
-//       <div className="border-rose-300 bg-stone-400">
-//         {" "}
-//         version sugggested:
-//         <br />
-//         {data?.versionSuggested?.map((item, i) => (
-//           <div onClick={() => onChange(item)} className="border-lime-300">
-//             createdBy: {item?.createdBy}, {item?.sequence}
-//             &nbsp; &nbsp;
-//             <button onClick={() => onApprove(item)}>
-//               Approve to this version
-//             </button>
-//             <br />
-//           </div>
-//         ))}
-//       </div>
-//       <br />
-//       <br />
-//       <div className="border-red-600 bg-purple-400">
-//         {" "}
-//         history:
-//         <br />
-//         {data?.versions?.map((item, i) => (
-//           <div onClick={() => onChange(item)} className="border-lime-300">
-//             createdBy: {item?.createdBy}, {item?.sequence}
-//             &nbsp; &nbsp;
-//             <button onClick={() => onApprove(item)}>
-//               Approve to this version
-//             </button>
-//             <br />
-//           </div>
-//         ))}
-//       </div>
-//     </div>
-//   );
-// };
-
-// border displaying it's matched  with current version + button to change the version
-// const ListVersion
-
-// export async function getServerSideProps({ req, res }) {
-//     // Create a cookies instance
-//     const cookies = new Cookies(req, res)
-//     // Get a cookie
-//     const curr = cookies.get('flows')
-//     // Set a cookie
-//     // console.log(JSON.parse(curr), 'curr')
-//     return {
-//         props: {
-//             cookies: curr
-//         }
-//     }
-// }
+const VertiIcon = ({ onClick, color = "white" }) => (
+  <svg
+    onClick={onClick}
+    xmlns="http://www.w3.org/2000/svg"
+    className="h-7 w-7"
+    viewBox="0 0 20 20"
+    fill={color}
+  >
+    <path d="M9 2a2 2 0 00-2 2v8a2 2 0 002 2h6a2 2 0 002-2V6.414A2 2 0 0016.414 5L14 2.586A2 2 0 0012.586 2H9z" />
+    <path d="M3 8a2 2 0 012-2v10h8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z" />
+  </svg>
+);

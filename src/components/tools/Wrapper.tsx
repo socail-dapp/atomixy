@@ -21,6 +21,7 @@ export default ({
   data,
   isEdit,
   isCreate = false,
+  keyContract,
 }: {
   data: any;
   isEdit: boolean;
@@ -143,6 +144,7 @@ export default ({
               setEditStatus: (v: boolean) => setEditStatus(v),
               elements,
               data,
+              keyContract,
             }}
           />
         </ReactFlow>

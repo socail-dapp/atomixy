@@ -8,6 +8,13 @@ import ToolTip from "../ToolTip";
 import ModalDialog from "../ModalDialog";
 import toast from "react-hot-toast";
 import useFetch from "@/helpers/hooks/useFetch";
+import useStore from "@/helpers/store";
+import { shortenHex } from "@/helpers/utils/evm";
+import { useWeb3React } from "@web3-react/core";
+import useDynamicContract from "@/helpers/hooks/useDynamicContract";
+import { localAbi, localAddress } from "@/helpers/utils/networks";
+import ipfs from "@/helpers/utils/ipfs";
+import useFlow from "@/helpers/store/useFlow";
 
 export default function ButtonVersions({
   selectedVersion,
@@ -15,15 +22,30 @@ export default function ButtonVersions({
   // setVersion
   onChange,
 }) {
-  const { data: dataWallet } = useWallet();
-  const { data, onRefresh } = useFetch();
+  const { account, library, chainId } = useWeb3React();
+  // const { setLock, setUnlock, lock: unlocked
+
+  // const { data: dataWallet } = useWallet();
+  const { onRefresh } = useFetch();
+  const { currentFlow: data, addFlow } = useStore();
+  const { key } = useFlow();
+
+  // console.log(data, 'DATA FROM VERSIONS check');
+  // function switch contract?
+  // use from data parent which contracts
+  // refactor  to accept other chain than evm
+  const _contract = useDynamicContract(localAddress, localAbi, true);
+
   // item as currentFlow
   const onApprove = async (item) => {
-    //show modal -> approving this flow as a main?
-    //transaction
+    // todo:
+    // check if network from dtb same with current wallet
     // if current is already matched-> cannot add
 
-    const ACCOUNT = dataWallet?.accountId;
+    const isConnected = typeof account === "string" && !!library;
+    if (!isConnected) return alert("Connect wallet");
+
+    const ACCOUNT = account;
 
     const approvedCommit = {
       ...item,
@@ -45,10 +67,48 @@ export default function ButtonVersions({
     };
 
     try {
-      await store.set("flows", payloadFlow);
+      // await store.set("flows", payloadFlow);
+      const ipfsId = await ipfs.add(JSON.stringify(payloadFlow));
+      console.log(ipfsId, "ipfsId");
+      let resultTx;
+
+      console.log("APPROVING TX", key);
+      const payloadContract = {
+        ipfsPath: ipfsId.path,
+        ipfsUrl: `https://ipfs.io/ipfs/${ipfsId.path}`,
+        // data below is all fixed from
+        // todo: refactor v2
+        chainId,
+        tags: [],
+        networks: "local", //isCreate
+        title: data?.title, //isCreate
+        description: data?.description, //isCreate
+        createdBy: data?.createdBy,
+        createdAt: data?.createdAt,
+        updatedAt: moment().unix(), //current time
+        // poolsId: //ipfsPoolId
+      };
+      console.log(_contract, "_contract");
+
+      //use typechain to avoid issue, todo
+      resultTx = await _contract.updateFlow(
+        key,
+        JSON.stringify(payloadContract)
+      );
+      //??: update storeFlow -> not required since it will be refreshed
+      addFlow(payloadContract);
+      //??: change the url slug
+      window.history.replaceState(null, "", `/flow/${ipfsId.path}?key=${key}`);
+
+      console.log(resultTx, "res");
+      if (!resultTx) throw Error;
+
       onChange(approvedCommit);
       toast.success(`You just approved a version`);
-      onRefresh();
+
+      // change this window reload with onrefresh instead, for seamless
+      window.location.reload();
+      // onRefresh(); // todo: fix onRefresh
     } catch (error) {
       console.log(error);
     }
@@ -71,7 +131,7 @@ export default function ButtonVersions({
   const dataArray = tabs ? data?.versionSuggested : data?.versions;
 
   return (
-    <div className="float-right m-2 ">
+    <div className=" m-2 ">
       <ModalDialog
         title={`Approve confirmation`}
         desc={`Are you sure you want to approve and change to this version?`}
@@ -184,14 +244,22 @@ export default function ButtonVersions({
                                   }`
                                 }
                               >
-                                By {item.createdBy}
+                                By
+                                {shortenHex(item?.createdBy, 4)}
                                 {/* date */}
                               </p>
+                              {/* bugs -> first version date */}
                               <p className="text-xs text-gray-500">
                                 {!tabs && `Approved `}
                                 {tabs
                                   ? moment.unix(item.createdAt).fromNow()
-                                  : moment.unix(item.approvedAt).fromNow()}
+                                  : moment
+                                      .unix(
+                                        item.approvedAt ||
+                                          item?.updatedAt ||
+                                          item?.createdAt
+                                      )
+                                      .fromNow()}
                               </p>
                             </div>
                           </div>

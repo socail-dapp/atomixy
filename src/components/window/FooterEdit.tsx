@@ -9,10 +9,10 @@ export default function FooterEdit({ onRemove, onAdd }) {
   const [isOpened, setOpen] = useState(false);
 
   function onOpen() {
-    setOpen(false);
+    setOpen(true);
   }
   function onClose() {
-    setOpen(true);
+    setOpen(false);
   }
 
   return (

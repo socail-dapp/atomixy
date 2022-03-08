@@ -12,17 +12,13 @@ import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
 import { PhantomWalletAdapter } from "@solana/wallet-adapter-wallets";
 import { clusterApiUrl } from "@solana/web3.js";
 import { FC, useMemo } from "react";
-import { Web3Provider } from "../helpers/Web3Context";
 import Layout from "@/components/Layout";
+import { Web3ReactProvider } from "@web3-react/core";
+import getLibrary from "@/helpers/evm/getLibrary";
 
 // Use require instead of import since order matters
 require("@solana/wallet-adapter-react-ui/styles.css");
-require("../styles/globals.css");
-
-
-const targetNetwork = "localhost";
-
-
+// require("../styles/globals.css");
 
 function MyApp({ Component, pageProps }: AppProps) {
   // Can be set to 'devnet', 'testnet', or 'mainnet-beta'
@@ -37,22 +33,20 @@ function MyApp({ Component, pageProps }: AppProps) {
   const wallets = useMemo(() => [new PhantomWalletAdapter()], [network]);
 
   return (
-    <Web3Provider network={targetNetwork}>
+    <Web3ReactProvider getLibrary={getLibrary}>
       <ConnectionProvider endpoint={endpoint}>
         <WalletProvider wallets={wallets} autoConnect>
           <WalletModalProvider>
             <ModalProvider>
               <ReactFlowProvider>
                 <Toaster position="bottom-center" reverseOrder={false} />
-                <Layout>
-                  <Component {...pageProps} />
-                </Layout>
+                <Component {...pageProps} />
               </ReactFlowProvider>
             </ModalProvider>
           </WalletModalProvider>
         </WalletProvider>
       </ConnectionProvider>
-    </Web3Provider>
+    </Web3ReactProvider>
   );
 }
 

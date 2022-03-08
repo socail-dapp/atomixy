@@ -22,8 +22,8 @@ export default function ModalDialog({
   //     setIsOpen(true)
   //   }
 
-  const { isOpen, openModal, closeModal } = useDialog();
-  console.log(isOpened, "isopened?");
+  // const { isOpen, openModal, closeModal } = useDialog();
+  // console.log(isOpened, "isopened?");
   return (
     <Transition appear show={isOpened} as={Fragment}>
       <Dialog

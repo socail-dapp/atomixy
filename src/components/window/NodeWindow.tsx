@@ -26,6 +26,7 @@ const defaultDetail = {
   // style: { backgrounColor: 'orange', background: `#ff0266`, color: 'white', border: 0 }
 };
 
+// todo: react.memo
 const NodeWindow = ({
   elements,
   setElements,
@@ -36,7 +37,7 @@ const NodeWindow = ({
   currentSource = [],
   isCreate = false,
 }: any) => {
-  console.log(currentDetail, "currentDetailcurrentDetail");
+  // console.log(currentDetail, "currentDetailcurrentDetail");
 
   const { setEditWindow } = useWindow();
   useEffect(() => {

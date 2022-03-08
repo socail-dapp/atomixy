@@ -1,4 +1,5 @@
 import useStore from "@/helpers/store";
+import useCreate from "@/helpers/store/useCreate";
 import React, { useState } from "react";
 import Button from "../Button";
 import Input from "../forms/Input";
@@ -6,10 +7,9 @@ import VerticalSelect from "../forms/RadioGroup";
 
 export default function ModalCreation() {
   const { addFlow, closeModal } = useStore();
-  const [state, setState] = useState({
-    title: null,
-    description: null,
-  });
+
+  const { title, description, setTitle, setDescription } = useCreate();
+
   return (
     <div className="p-5 bg-gray-200 border-white border rounded-md md:w-2/3">
       <h2 className="font-bold  text-3xl text-gray-700">Create Project</h2>
@@ -19,16 +19,11 @@ export default function ModalCreation() {
       <br />
 
       <div className="w-full xl:w-1/2">
-        <Input
-          label={`Title*`}
-          onChange={(title: string) => setState({ ...state, title })}
-        />
+        <Input label={`Title*`} onChange={(value: string) => setTitle(value)} />
         <br />
         <Input
           label={`Description*`}
-          onChange={(description: string) =>
-            setState({ ...state, description })
-          }
+          onChange={(value: string) => setDescription(value)}
         />
         <br />
         <VerticalSelect
@@ -45,7 +40,8 @@ export default function ModalCreation() {
         onClick={() => {
           addFlow({
             ...default_flow,
-            state,
+            title,
+            description,
           });
           closeModal();
         }}

@@ -5,7 +5,8 @@ import Wrapper from "@/components/tools/Wrapper";
 import { useEffect } from "react";
 import { ICommit } from "@/helpers/types";
 import ModalCreation from "@/components/modals/ModalCreation";
-// import Cookies from 'cookies'
+import { HeaderWallet } from "@/components/Layout";
+
 /**
  * I want the node as VIEW ONLY FIRST
  */
@@ -13,19 +14,22 @@ import ModalCreation from "@/components/modals/ModalCreation";
 export default ({ cookies }) => {
   const { setUnlock, showModal, currentFlow } = useStore();
   useEffect(() => {
-    // showModal(<ModalCreation />)
+    showModal(<ModalCreation />);
     setUnlock();
   }, []);
 
   return (
-    <Wrapper
-      {...{
-        fullData: currentFlow,
-        data: currentFlow?.currentVersion,
-        isEdit: true,
-        isCreate: true,
-      }}
-    />
+    <>
+      <HeaderWallet minimize />
+      <Wrapper
+        {...{
+          fullData: currentFlow,
+          data: currentFlow?.currentVersion,
+          isEdit: true,
+          isCreate: true,
+        }}
+      />
+    </>
   );
 };
 
