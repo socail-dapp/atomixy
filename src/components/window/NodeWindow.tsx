@@ -12,6 +12,7 @@ import Button from "../Button";
 import useWindow from "@/helpers/store/useWindow";
 import FooterEdit from "./FooterEdit";
 import toast from "react-hot-toast";
+import { Resizable } from "re-resizable";
 
 const getNodeId = () => `randomnode_${+new Date()}`;
 
@@ -148,12 +149,29 @@ const NodeWindow = ({
     [setElements, detail]
   );
   const { tabs } = useWindow();
+  const [width, setWidth] = useState('50vw');
+
   return (
-    <div
-      className={`absolute p-3 w-full md:w-1/2 h-full z-30 right-0  ${
-        edit && `border-green-400`
-      }`}
+    <Resizable
+      style={{
+        position: 'absolute',
+        bottom: 0,
+        zIndex: 30,
+        background: `darkgrey`,
+        right: 0,
+        padding: 3,
+        borderRadius: 6
+      }}
+      size={{ height: '100%', width }}
+      // maxHeight={`90vh`}
+      minHeight={`40vh`}
+      minWidth={`30vw`}
+      maxWidth={`100vw`}
+      onResizeStop={(e, direction, ref, d) => {
+        setWidth(width + d.width);
+      }}
     >
+
       <div
         className={`
       ${edit ? `bg-white` : `bg-gradient-to-r from-gray-300 to-zinc-200`}
@@ -183,7 +201,7 @@ const NodeWindow = ({
         {edit && <Reply />}
         {!edit && <FooterEdit {...{ onRemove, onAdd }} />}
       </div>
-    </div>
+    </Resizable>
   );
 };
 

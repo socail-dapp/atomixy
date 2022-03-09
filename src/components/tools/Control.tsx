@@ -132,7 +132,7 @@ export default function Control({
       uuid: uuidv4(),
       versionName: !isCreate ? versionName : `v0.0.0`,
       prevId: !isCreate ? currentFlow?.currentVersion?.uuid : `v0.0.0beta`,
-      type: !isCreate ? "update" : "create",
+      type: !isCreate ? "update-request" : "create",
       //uuid -> for selecting in between versions
     };
     // prevElement, prevIPFS}
@@ -157,9 +157,10 @@ export default function Control({
     prevVersionsSuggestion.unshift(commitFlow);
     const versionSuggested = prevVersionsSuggestion;
 
+    // console.log(currentFlow?.versionByUser[ACCOUNT], 'currentFlow?.versionByUser[ACCOUNT]')
     // C. each users also recorded
     const prevVersionByUser = !isCreate
-      ? currentFlow?.versionByUser[ACCOUNT]
+      ? !!currentFlow?.versionByUser[ACCOUNT] ? currentFlow?.versionByUser[ACCOUNT] : []
       : [];
     prevVersionByUser.unshift(commitFlow);
 

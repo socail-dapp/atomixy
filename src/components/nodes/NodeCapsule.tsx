@@ -2,18 +2,19 @@ import useStore from "@/helpers/store";
 
 // id to remove the node
 
-const NodeCapsule = ({ detail, id, position }) => {
+const NodeCapsule = ({ detail, id, position, highlighted = true }) => {
   const { addNodeWindow } = useStore();
 
   return (
     <div
       onClick={() => {
-        console.log("click node");
+        // console.log("click node");
         addNodeWindow({ ...detail, id, position });
       }}
       //missing the position too?
       style={{
-        background: detail?.colorBg,
+        // background: detail?.colorBg,
+        // background: detail?.colorBg,
         // width: 300,
         // height: 200,
         // color: detail?.colorText,

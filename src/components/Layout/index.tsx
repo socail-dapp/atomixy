@@ -18,7 +18,7 @@ export const HeaderWallet = ({ minimize = false }) => {
 
   if (minimize) {
     return (
-      <div className="relative m-2 left-24  backdrop-blur-sm border rounded-md text-gray-400">
+      <div className="relative m-2 backdrop-blur-sm border rounded-md text-gray-400">
         {/* based on network will shows the selected wallet? */}
         {/* todo: reponsive mobile */}
         <Account triedToEagerConnect={triedToEagerConnect} />

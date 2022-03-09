@@ -25,6 +25,10 @@ const useStore = create((set, get) => {
     showModal: (value) => set({ Component: value }),
     closeModal: () => set({ Component: null }),
 
+    //tools
+    search: "",
+    setSearch: (v) => set({ search: v }),
+
     //
     router: {},
     user: null,
@@ -35,7 +39,6 @@ const useStore = create((set, get) => {
     defaultModels: null,
     currentModels: [],
     parseBuffer: null,
-    search: "",
     order: "alphabetic",
   };
 });

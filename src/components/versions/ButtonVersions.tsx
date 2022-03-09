@@ -51,6 +51,7 @@ export default function ButtonVersions({
       ...item,
       approvedBy: ACCOUNT,
       approvedAt: moment().unix(),
+      type: 'approved'
     };
 
     // add approved commit to main versions track
@@ -88,7 +89,7 @@ export default function ButtonVersions({
         updatedAt: moment().unix(), //current time
         // poolsId: //ipfsPoolId
       };
-      console.log(_contract, "_contract");
+      // console.log(_contract, "_contract");
 
       //use typechain to avoid issue, todo
       resultTx = await _contract.updateFlow(
@@ -131,7 +132,7 @@ export default function ButtonVersions({
   const dataArray = tabs ? data?.versionSuggested : data?.versions;
 
   return (
-    <div className=" m-2 ">
+    <div className=" m-2 float-right ">
       <ModalDialog
         title={`Approve confirmation`}
         desc={`Are you sure you want to approve and change to this version?`}
@@ -170,7 +171,7 @@ export default function ButtonVersions({
               leaveFrom="opacity-100 translate-y-0"
               leaveTo="opacity-0 translate-y-1"
             >
-              <Popover.Panel className="absolute z-10 w-screen max-w-sm mt-3 transform  right-0  ">
+              <Popover.Panel className="absolute z-50 w-screen max-w-sm mt-3 transform  right-0  ">
                 <div className="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 ">
                   <div className="flex row">
                     <div

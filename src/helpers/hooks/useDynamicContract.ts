@@ -37,7 +37,7 @@ export default function useDynamicContract(
       return new Contract(
         address,
         ABI,
-        isMatchedNetwork ? library.getSigner(account) : _provider
+        isMatchedNetwork ? library?.getSigner(account) : _provider
       );
     } catch (error) {
       console.error("Failed To Get Contract", error);

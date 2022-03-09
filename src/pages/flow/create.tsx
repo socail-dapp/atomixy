@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { ICommit } from "@/helpers/types";
 import ModalCreation from "@/components/modals/ModalCreation";
 import { HeaderWallet } from "@/components/Layout";
+import Search from "@/components/Search";
 
 /**
  * I want the node as VIEW ONLY FIRST
@@ -20,7 +21,15 @@ export default ({ cookies }) => {
 
   return (
     <>
-      <HeaderWallet minimize />
+
+      <div className="absolute w-screen flex row justify-between z-10 ">
+        {/* dont remove to balance the space-between of 3 items */}
+        <div />
+        <HeaderWallet minimize />
+
+        <div
+        />
+      </div>
       <Wrapper
         {...{
           fullData: currentFlow,
@@ -48,6 +57,22 @@ const default_commit: ICommit = {
   pools: [], //grant or bounty pools ??
   //prevSequenceArray ? so I can identify from which upgrade
 };
+
+// poolsstructured inside of element
+interface IPool {
+  txHash: string
+  blockHash: any
+  chainId: number | string
+  value: any // value donated
+  from: string
+  to: string
+  fee: any
+  createdAt: any
+  network: any
+  nodeId: any
+  nodeTitle: any
+}
+
 
 const default_flow = {
   title: "just created",

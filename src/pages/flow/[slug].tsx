@@ -14,6 +14,7 @@ import useFlow from "@/helpers/store/useFlow";
 import ReactSplit, { SplitDirection } from "@devbookhq/splitter";
 import { HeaderWallet } from "@/components/Layout";
 import ToolTip from "@/components/ToolTip";
+import Search from "@/components/Search";
 
 const fetcher = (url) => axios.get(url).then((res) => res.data);
 
@@ -68,9 +69,9 @@ export default ({ fallback, slug, keyContract, isError = false }) => {
         {/* <div className="absolute">
         information to click (authority: current version)
       </div> */}
-        <div className="absolute w-screen flex row justify-between z-10 ">
+        <div className="absolute w-screen flex flex-col sm:flex-row justify-between z-10 ">
           {/* dont remove to balance the space-between of 3 items */}
-          <div />
+          <Search />
           <HeaderWallet minimize />
 
           <ButtonVersions
@@ -140,7 +141,7 @@ function VerticalSplit({ onParent, parentArr, children }: any) {
       {currArr?.map((item, i) => (
         <div className="absolute h-full w-full ">
           <div
-            className="absolute m-2 flex row gap-2 right-3/4 z-10  cursor-pointer"
+            className="invisible md:visible absolute m-2 flex row gap-2 right-3/4 z-10  cursor-pointer"
             key={i}
           >
             {parentArr === 2 && currArr?.length === 1 && (
