@@ -118,9 +118,9 @@ export default ({
                 </div>
             )} */}
       {lock && (
-        <div className="absolute z-10 w-full">
+        <div className="absolute  w-full bottom-0">
           <div className="flex justify-center align-middle ">
-            <div className=" bg-gray-300  px-4 text-xs text-white bg-opacity-20 text-opacity-50">
+            <div className=" bg-gray-300  px-4 text-xs text-white  bg-opacity-20 text-opacity-50">
               FREEZE OFF, you can drag and connect the node
             </div>
           </div>
