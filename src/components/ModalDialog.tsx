@@ -28,7 +28,7 @@ export default function ModalDialog({
     <Transition appear show={isOpened} as={Fragment}>
       <Dialog
         as="div"
-        className="fixed inset-0 z-10 overflow-y-auto backdrop-blur-md"
+        className="fixed inset-0 z-50 overflow-y-auto backdrop-blur-md"
         onClose={onClose}
       >
         <div className="min-h-screen px-4 text-center">

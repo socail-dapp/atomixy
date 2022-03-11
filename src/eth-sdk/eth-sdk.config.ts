@@ -8,6 +8,9 @@ const config: EthSdkConfig = {
     localhost: {
       atomixy: process.env.NEXT_LOCAL_ADDRESS,
     },
+    matic: {
+      tokenV1: "0x0646D535ee5EDb9FaFcceC2e42809Bf74A5A96b8",
+    },
   },
 };
 

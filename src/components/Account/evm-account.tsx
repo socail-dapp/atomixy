@@ -6,6 +6,7 @@ import useENSName from "@/helpers/hooks/useENSName";
 import useMetaMaskOnboarding from "@/helpers/hooks/useMetaMaskOnboarding";
 import { formatEtherscanLink, shortenHex } from "@/helpers/utils/evm";
 import Button from "../Button";
+import { getNetworkName } from "@/helpers/utils/networks";
 
 type AccountProps = {
   triedToEagerConnect: boolean;
@@ -71,7 +72,8 @@ const Account = ({ triedToEagerConnect }: AccountProps) => {
 
   return (
     <div className="flex m-2 row align-middle">
-      Network: {chainId} &nbsp; &nbsp; &nbsp; | &nbsp; &nbsp; &nbsp;
+      {console.log(getNetworkName(chainId), `getNetworkName(chainId)`)}
+      Network: {getNetworkName(chainId)} &nbsp; &nbsp; &nbsp; | &nbsp; &nbsp; &nbsp;
       {/* check network metamask === with current flow network */}
       <a
         {...{

@@ -12,7 +12,7 @@ import useStore from "@/helpers/store";
 import { shortenHex } from "@/helpers/utils/evm";
 import { useWeb3React } from "@web3-react/core";
 import useDynamicContract from "@/helpers/hooks/useDynamicContract";
-import { localAbi, localAddress } from "@/helpers/utils/networks";
+import { getNetworkName, localAbi, localAddress } from "@/helpers/utils/networks";
 import ipfs from "@/helpers/utils/ipfs";
 import useFlow from "@/helpers/store/useFlow";
 
@@ -81,7 +81,7 @@ export default function ButtonVersions({
         // todo: refactor v2
         chainId,
         tags: [],
-        networks: "local", //isCreate
+        networks: getNetworkName(chainId), //isCreate
         title: data?.title, //isCreate
         description: data?.description, //isCreate
         createdBy: data?.createdBy,

@@ -18,17 +18,20 @@ import Search from "@/components/Search";
 
 const fetcher = (url) => axios.get(url).then((res) => res.data);
 
-export async function getServerSideProps({ query: { slug, key } }) {
+export async function getServerSideProps({ query: { slug, key, storage } }) {
+  // chainid -> testing use ipfs, on mainnet -> use arweave
   // 1. load from ipfs
   // ??: also load directly to provider ? optional?
+  const url = `https://ipfs.io/ipfs/${slug}`
+  // const url = storage === 'ipfs' ? `https://ipfs.io/ipfs/${slug}` : `https://arweave.net/${slug}`
   try {
-    const dataFlow = await fetcher(`https://ipfs.io/ipfs/${slug}`);
-    console.log(`this is key ${key}`);
+    const dataFlow = await fetcher(url);
+    // console.log(`this is key ${key}`);
     return {
       props: {
         slug,
         keyContract: key,
-        chainId: 31337,
+        // chainId: 31337,
         fallback: {
           [slug]: dataFlow,
         },

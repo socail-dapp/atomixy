@@ -21,10 +21,15 @@ import { v4 as uuidv4 } from "uuid";
 import toast from "react-hot-toast";
 import { useWeb3React } from "@web3-react/core";
 import useDynamicContract from "@/helpers/hooks/useDynamicContract";
-import { localAbi, localAddress } from "@/helpers/utils/networks";
+import { getNetworkName, localAbi, localAddress, maticAddress } from "@/helpers/utils/networks";
 import useFlow from "@/helpers/store/useFlow";
 import useFetch from "@/helpers/hooks/useFetch";
 import ipfs from "@/helpers/utils/ipfs";
+import { WebBundlr } from "@bundlr-network/client";
+import useBundlr from "@/helpers/hooks/useBundlr";
+import useFund from "@/helpers/hooks/useFund";
+
+
 
 export default function Control({
   data,
@@ -76,7 +81,10 @@ export default function Control({
   // function switch contract?
   // use from data parent which contracts
   // refactor  to accept other chain than evm
-  const _contract = useDynamicContract(localAddress, localAbi, true);
+  const _contract = useDynamicContract(maticAddress, localAbi, true);
+  console.log(_contract, 'CONTRACT MATIC')
+  const bundlr = useBundlr()
+
 
   // const [loadingTx, setLoadingTx] = useState(false)
   //bug on versions
@@ -197,7 +205,9 @@ export default function Control({
       updatedAt: moment().unix(),
       ...(isCreate ? forCreation : forUpdating),
       chainId,
-      networks: "local", //isCreate
+      networks: getNetworkName(chainId), //isCreate
+      appVersion: 'v1-BETA'
+
       // networks:
       // contract_address
     };
@@ -210,12 +220,30 @@ export default function Control({
       }
     }
 
-    console.log(payloadFlow, "FINAL CHECK", isCreate);
+    // console.log(payloadFlow, "FINAL CHECK", isCreate);
+
+
+    /**
+     * flow for mainnet using arweave
+     * 1. check fund
+     * 2. check payloadFlow price
+     * 3. calculate
+     */
+    //ALERT for mainnet -> if funding is not bigger than current price
+
+    // alert(getPrice(JSON.stringify(payloadFlow)))
+
 
     try {
+
+      /**URGENT: ipfs for testnet, polygon for arweave */
       // await store.set("flows", payloadFlow);
       const ipfsId = await ipfs.add(JSON.stringify(payloadFlow));
-      console.log(ipfsId, "ipfsId");
+      // console.log(ipfsId, "ipfsId");
+      const arweaveId = await _upload(payloadFlow);
+
+
+
       let resultTx;
 
       if (isCreate) {
@@ -223,12 +251,15 @@ export default function Control({
           ipfsPath: ipfsId.path,
           ipfsUrl: `https://ipfs.io/ipfs/${ipfsId.path}`,
           chainId,
-          networks: "local", //isCreate
+          // arweaveId,
+          // arweaveUrl: `https://arweave.net/${arweaveId}`
+          networks: getNetworkName(chainId),  //isCreate
           title: currentFlow?.title, //isCreate
           description: currentFlow?.description, //isCreate
           tags: [],
           createdAt, //isCreate
           // poolsId: //ipfsPoolId
+          frozenData: 'ipfs' // arweave/filecoin/ipfs
         };
         console.log(_contract, "_contract");
 
@@ -245,15 +276,18 @@ export default function Control({
           ipfsPath: ipfsId.path,
           ipfsUrl: `https://ipfs.io/ipfs/${ipfsId.path}`,
           chainId,
-          networks: "local", //isCreate
+          // arweaveId,
+          // arweaveUrl: `https://arweave.net/${arweaveId}`
+          networks: getNetworkName(chainId), //isCreate
           title: currentFlow?.title, //isCreate
           description: currentFlow?.description, //isCreate
           tags: [],
           createdAt: currentFlow?.createdAt,
           updatedAt: createdAt, //current time
           // poolsId: //ipfsPoolId
+          frozenData: 'ipfs' // arweave/filecoin/ipfs
         };
-        console.log(_contract, "_contract");
+        // console.log(_contract, "_contract");
 
         //use typechain to avoid issue, todo
         resultTx = await _contract.updateFlow(
@@ -291,6 +325,8 @@ export default function Control({
       toast.success(`You just add a new version`, {
         position: "top-right",
       });
+
+
     // if (isCreate) router.push(`/`);
   };
 
@@ -301,6 +337,18 @@ export default function Control({
   }
   function onClose() {
     setOpen(false);
+  }
+
+
+  const { currentFund, getPrice, _upload } = useFund()
+
+  const CheckFund = () => {
+    return (
+      <div className="text-sm text-rose-400 my-2 font-medium">
+        Current Fund: {currentFund}
+      </div>
+    )
+
   }
 
   if (!isCreate) {
@@ -322,6 +370,7 @@ export default function Control({
           hasChildren
         >
           <div className="my-2">
+            <CheckFund />
             <Input
               label={`Version Tag:`}
               onChange={(v: string) => setVersionName(v)}

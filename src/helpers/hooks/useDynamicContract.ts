@@ -20,6 +20,7 @@ export default function useDynamicContract(
     console.log(
       account,
       library?.getSigner(account),
+      // library,
       chainId,
       "account DCONS",
       account ? "exist account" : "null ",
