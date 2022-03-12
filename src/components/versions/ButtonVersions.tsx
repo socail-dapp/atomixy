@@ -172,6 +172,7 @@ export default function ButtonVersions({
           onClose,
           isOpened,
         }}
+        hasChildren
       >
 
         <StorageOption

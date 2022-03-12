@@ -1,6 +1,6 @@
 import useFund from '@/helpers/hooks/useFund';
 import useStore from '@/helpers/store';
-import React, { useCallback, useEffect, useMemo } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import Input from '../forms/Input';
 import VerticalSelect from '../forms/RadioGroup'
 
@@ -22,7 +22,7 @@ export default function ({
     currentStorage,
     isCreate
 }) {
-    const { currentFund, getPrice, priceEst } = useFund()
+    const { currentFund, getPrice, priceEst, addFund } = useFund()
     const { currentFlow } = useStore()
 
     useEffect(() => {
@@ -31,7 +31,7 @@ export default function ({
 
     const CheckFund = useCallback(() => {
         return (
-            <div className="text-sm text-rose-400 my-2 font-medium">
+            <div className="text-sm text-green-700 my-2 font-medium">
                 Current Fund: {currentFund}
             </div>
         )
@@ -40,11 +40,13 @@ export default function ({
     // todo: incomplete data, refactor onSAVE
     const EstimationPrice = useCallback(() => {
         return (
-            <div className="text-sm text-purple-700 my-2 font-medium">
+            <div className="text-sm text-purple-500  my-2 font-medium">
                 Estimation Price: {priceEst}
             </div>
         )
     }, [priceEst])
+
+    const [numberFund, setNumberFund] = useState<number>(0)
 
     return (
         <div>
@@ -60,22 +62,39 @@ export default function ({
                     options={storage}
                 />}
             {/* ONLY SHOW to arweave */}
-            <CheckFund />
             <EstimationPrice />
-            {/* 
-            <div className='flex row '>
-                <input
-                    type="text"
-                    className="block w-full p-2 border border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
-                    value={`value`}
-                    onChange={(e) => {
-                        //  onChange(e.target.value)
+            <CheckFund />
 
+            <div className='flex row gap-2 '>
+                <input
+                    key='name'
+                    // label='Input Price: Ⓝ'
+                    value={numberFund}
+                    onKeyPress={(event) => {
+                        if (!/\d+((\.|,)\d+)?/.test(event.key)) {
+                            event.preventDefault()
+                        }
+                    }}
+                    type='tel'
+                    pattern="\d+((\.|,)\d+)?"
+                    className="block w-full p-2 border border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+                    onChange={(e) => {
+                        e.preventDefault()
+                        setNumberFund(e.target.value)
                     }}
                 />
-            </div> */}
-            <p className='text-xs my-2 text-red-900'>*confirm will fail if fund lower than est price</p>
+                <button
+                    onClick={() => {
+                        if (numberFund < 0) return alert('Number must greater than 0')
 
+                        addFund(numberFund)
+
+                    }}
+                    className='w-full text-white bg-green-700 rounded-md font-medium '>FUND</button>
+            </div>
+            <p className='text-xs my-2 text-red-900'>*confirm will fail if fund lower than est price, fund transaction will take around 5-10secs, and check your metamask after button pressed</p>
+            <br />
+            <br />
             {/* check network? */}
         </div>
     )

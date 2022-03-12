@@ -2,7 +2,14 @@ import React, { useMemo, useState } from "react";
 // import { useWeb3React } from "@web3-react/core";
 import useDynamicContract from "@/helpers/hooks/useDynamicContract";
 import { useCallback, useEffect } from "react";
-import { localAbi, localAddress, maticAddress, rinkebyAddress } from "../utils/networks";
+import {
+  localAbi, localAddress, maticAddress, rinkebyAddress,
+  // ropstenAddress,
+  // goerliAddress,
+  // kovanAddress,
+  // avaxTestAddress,
+
+} from "../utils/networks";
 
 
 export default function useLoadList() {
@@ -11,7 +18,12 @@ export default function useLoadList() {
 
   // const getLocalData = useDynamicContract(localAddress, localAbi);
   const getMaticData = useDynamicContract(maticAddress, localAbi, false, "https://polygon-rpc.com/");
-  // const getRinkeby = useDynamicContract(rinkebyAddress, localAbi, false);
+  //testnet
+  const getRinkeby = useDynamicContract(rinkebyAddress, localAbi, false, "https://rinkeby.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161");
+  // const getRopsten = useDynamicContract(ropstenAddress, localAbi, false,"https://ropsten.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161");
+  // const getGoerli = useDynamicContract(goerliAddress, localAbi, false,"https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161");
+  // const getKovan= useDynamicContract(kovanAddress, localAbi, false,"https://kovan.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161");
+  // const getAvaxTest = useDynamicContract(avaxTestAddress, localAbi, false,"https://api.avax-test.network/ext/bc/C/rpc");
 
 
 
@@ -31,10 +43,11 @@ export default function useLoadList() {
         // const local = await getLocalData?.getFlows(i);
         const matic_data = await getMaticData?.getFlows(i);
 
-        console.log(matic_data, 'MATIC',)
-
-        // const r = await getRinkeby?.getFlows(i);
-
+        // testnet
+        const test_rink = await getRinkeby?.getFlows(i);
+        // const test_kovan= await getKovan?.getFlows(i);
+        // const test_goerli = await getGoerli?.getFlows(i);
+        // const test_ropsten = await getRopsten?.getFlows(i);
 
         // if (local) {
         //   list.push(JSON.parse(local));
@@ -45,9 +58,9 @@ export default function useLoadList() {
           list.push({ ...m, indexID: i });
         }
 
-        // if (r) {
-        //   list.push(JSON.parse(r));
-        // }
+        if (test_rink) {
+          list.push(JSON.parse(test_rink));
+        }
       }
 
 

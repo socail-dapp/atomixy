@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import useBundlr from './useBundlr'
 import { useWeb3React } from "@web3-react/core";
+import BigNumber from "bignumber.js";
+
 
 export default function useFund() {
     const [currentFund, setCurrentFund] = useState<number | string>(`loading...`)
@@ -63,6 +65,27 @@ export default function useFund() {
         } else return `Account error`
     }
 
+    const addFund = useCallback(async (value: number) => {
+        if (!!account && !!bundlr) {
+            try {
+                await bundlr?.ready()
+                await bundlr?.fund(parseInput(value))
+
+                getFund()
+                return alert("success add fund ")
+            } catch (error) {
+                console.log(error, 'eerorr')
+                return `Error...`
+            }
+        }
+
+    }, [])
+
+    const parseInput = useCallback((input: string | number) =>
+        new BigNumber(input).multipliedBy(
+            bundlr!.currencyConfig.base[1]
+        ), [])
+
     useEffect(() => {
         // console.log(bundlr, 'bundlr')
         getFund()
@@ -72,6 +95,8 @@ export default function useFund() {
         currentFund,
         getPrice,
         priceEst: price,
-        _upload
+        _upload,
+        addFund
     }
 }
+
