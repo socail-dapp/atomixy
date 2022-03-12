@@ -33,7 +33,9 @@ a {
   z-index: 1;
 }
 
-
+.bgmain {
+  background: #232b2b;
+}
 
 .react-datepicker__input-container input {
   @apply block w-full text-base md:text-sm bg-white border border-gray-300 rounded shadow-sm form-input

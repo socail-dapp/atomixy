@@ -22,15 +22,18 @@ export async function getServerSideProps({ query: { slug, key, storage } }) {
   // chainid -> testing use ipfs, on mainnet -> use arweave
   // 1. load from ipfs
   // ??: also load directly to provider ? optional?
-  const url = `https://ipfs.io/ipfs/${slug}`
-  // const url = storage === 'ipfs' ? `https://ipfs.io/ipfs/${slug}` : `https://arweave.net/${slug}`
+
+
+  const url = storage === 'IPFS' || storage === 'ipfs' ? `https://ipfs.io/ipfs/${slug}` : `https://arweave.net/${slug}`
   try {
     const dataFlow = await fetcher(url);
-    // console.log(`this is key ${key}`);
+    // reconfirm the chainID, so use chainID from here.
+
     return {
       props: {
         slug,
         keyContract: key,
+        storage,
         // chainId: 31337,
         fallback: {
           [slug]: dataFlow,
@@ -46,20 +49,21 @@ export async function getServerSideProps({ query: { slug, key, storage } }) {
   }
 }
 
-export default ({ fallback, slug, keyContract, isError = false }) => {
+export default ({ fallback, slug, storage, keyContract, isError = false }) => {
   //useFetch(network?)
 
   // 1. inform user to change network ? (check network from data must be same with network wallet)
   // 2.
 
-  const { setVersion, selectedVersion, loading } = useFetch(slug);
+  const { setVersion, selectedVersion, loading } = useFetch(slug, storage);
 
   /**
    * clarify if key is same ?
    */
-  const { setKey } = useFlow();
+  const { setKey, setStorageType } = useFlow();
   useEffect(() => {
     setKey(keyContract);
+    setStorageType(storage)
   }, []);
 
   if (isError) {

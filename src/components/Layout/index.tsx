@@ -27,11 +27,12 @@ export const HeaderWallet = ({ minimize = false }) => {
   } else {
     return (
       <div
-        className={`w-full p-2 bg-rose-300 flex row gap-4 justify-between ${
+        className={`w-full p-2 bg-gray-300 flex row gap-4 justify-between ${
           minimize && "absolute"
         }`}
       >
-        <AccountSolana />
+        {/* <AccountSolana /> */}
+        <div />
         <div>
           <Account triedToEagerConnect={triedToEagerConnect} />
         </div>

@@ -1,15 +1,21 @@
 import React, { useMemo, useState } from "react";
-import { useWeb3React } from "@web3-react/core";
+// import { useWeb3React } from "@web3-react/core";
 import useDynamicContract from "@/helpers/hooks/useDynamicContract";
 import { useCallback, useEffect } from "react";
-import { localAbi, localAddress, maticAddress } from "../utils/networks";
+import { localAbi, localAddress, maticAddress, rinkebyAddress } from "../utils/networks";
+
+
 export default function useLoadList() {
   const [state, setState] = useState([]);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const { chainId } = useWeb3React();
-  const getLocalData = useDynamicContract(localAddress, localAbi);
-  // const getMainnetData = useDynamicContract(localContract, LocalToken.abi)
+  // const getLocalData = useDynamicContract(localAddress, localAbi);
+  const getMaticData = useDynamicContract(maticAddress, localAbi, false, "https://polygon-rpc.com/");
+  // const getRinkeby = useDynamicContract(rinkebyAddress, localAbi, false);
+
+
+
+
   const _loadAllData = useCallback(async () => {
     setLoading(true);
 
@@ -17,38 +23,47 @@ export default function useLoadList() {
 
     // todo: change array length to tokensupply? or read from methods
     // how to get better approach?
-
     try {
       const list: any = [];
 
       //load local -> refactor
-      for (let i = 0; i < 10; i++) {
-        const o = await getLocalData?.getFlows(i);
-        console.log(!!o, o);
+      for (let i = 1; i < 6; i++) {
+        // const local = await getLocalData?.getFlows(i);
+        const matic_data = await getMaticData?.getFlows(i);
 
-        if (o) {
-          list.push(JSON.parse(o));
+        console.log(matic_data, 'MATIC',)
+
+        // const r = await getRinkeby?.getFlows(i);
+
+
+        // if (local) {
+        //   list.push(JSON.parse(local));
+        // }
+
+        if (matic_data) {
+          const m = JSON.parse(matic_data)
+          list.push({ ...m, indexID: i });
         }
+
+        // if (r) {
+        //   list.push(JSON.parse(r));
+        // }
       }
 
-      // //load mainnet -> refactor
-      // for (let i = 0; i < 10; i++) {
-      //     const o = await getLocalData?.getFlows(i);
-      //     console.log(!!o, o)
-      //     if (o) {
-      //         list.push(JSON.parse(o))
-      //     }
-      // }
 
-      setState(list);
-      console.log(list, "list");
+      //filter takes long
+      const filteredList = list.sort((a, b) => b?.createdAt - a?.createdAt)
+      setState(filteredList);
+      console.log(filteredList, "filteredList");
       setLoading(false);
+
     } catch (error) {
+      console.log(error, 'error')
       setLoading(false);
     }
 
     //combined all arrays?
-  }, [getLocalData]);
+  }, [getMaticData]);
 
   useEffect(() => {
     _loadAllData();

@@ -12,9 +12,9 @@ export default function ModalCreation() {
 
   return (
     <div className="p-5 bg-gray-200 border-white border rounded-md md:w-2/3">
-      <h2 className="font-bold  text-3xl text-gray-700">Create Project</h2>
+      <h2 className="font-bold  text-3xl text-gray-700">Start your first Atom</h2>
       <p className="text-gray-400 mb-5">
-        Tell us, what's the name of flow/project/map
+        Then mix it with many things until it become as big as Galaxy🚀
       </p>
       <br />
 
