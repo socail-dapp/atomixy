@@ -2,8 +2,6 @@ import { Popover, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/solid";
 import { Fragment, useState } from "react";
 import moment from "moment";
-import store from "store";
-import useWallet from "@/helpers/hooks/useWallet";
 import ToolTip from "../ToolTip";
 import ModalDialog from "../ModalDialog";
 import toast from "react-hot-toast";
@@ -15,6 +13,8 @@ import useDynamicContract from "@/helpers/hooks/useDynamicContract";
 import { getNetworkName, localAbi, localAddress } from "@/helpers/utils/networks";
 import ipfs from "@/helpers/utils/ipfs";
 import useFlow from "@/helpers/store/useFlow";
+import useFund from "@/helpers/hooks/useFund";
+import StorageOption from "../tools/StorageOption";
 
 export default function ButtonVersions({
   selectedVersion,
@@ -28,7 +28,8 @@ export default function ButtonVersions({
   // const { data: dataWallet } = useWallet();
   const { onRefresh } = useFetch();
   const { currentFlow: data, addFlow } = useStore();
-  const { key } = useFlow();
+  const { key, storageType } = useFlow();
+  const { _upload } = useFund()
 
   // console.log(data, 'DATA FROM VERSIONS check');
   // function switch contract?
@@ -68,20 +69,40 @@ export default function ButtonVersions({
     };
 
     try {
-      // await store.set("flows", payloadFlow);
-      const ipfsId = await ipfs.add(JSON.stringify(payloadFlow));
-      console.log(ipfsId, "ipfsId");
-      let resultTx;
+      let storageID;
+      let storageURL;
+      const storage_type = storageType
 
-      console.log("APPROVING TX", key);
-      const payloadContract = {
-        ipfsPath: ipfsId.path,
-        ipfsUrl: `https://ipfs.io/ipfs/${ipfsId.path}`,
-        // data below is all fixed from
-        // todo: refactor v2
+      const isArweave = storage_type === 'ARWEAVE'
+      try {
+        if (isArweave) {
+          const arweaveId = await _upload(payloadFlow);
+          storageID = arweaveId
+          storageURL = `https://arweave.net/${arweaveId}`
+
+        } else {
+          const ipfsId = await ipfs.add(JSON.stringify(payloadFlow));
+          storageID = ipfsId
+          storageURL = `https://ipfs.io/ipfs/${ipfsId.path}`
+        }
+      } catch (error) {
+        console.log(error, 'error arweave');
+
+        alert('Storage error')
+      }
+
+      const storageInfo = {
+        storageID,
+        storageURL,
         chainId,
-        tags: [],
-        networks: getNetworkName(chainId), //isCreate
+        storage_type, //storage_type
+        networks: getNetworkName(chainId),  //isCreate
+      }
+      console.log(storageInfo, 'storageInfo')
+
+
+      const payloadContract = {
+        ...storageInfo,
         title: data?.title, //isCreate
         description: data?.description, //isCreate
         createdBy: data?.createdBy,
@@ -89,7 +110,8 @@ export default function ButtonVersions({
         updatedAt: moment().unix(), //current time
         // poolsId: //ipfsPoolId
       };
-      // console.log(_contract, "_contract");
+
+      let resultTx;
 
       //use typechain to avoid issue, todo
       resultTx = await _contract.updateFlow(
@@ -99,7 +121,11 @@ export default function ButtonVersions({
       //??: update storeFlow -> not required since it will be refreshed
       addFlow(payloadContract);
       //??: change the url slug
-      window.history.replaceState(null, "", `/flow/${ipfsId.path}?key=${key}`);
+      window.history.replaceState(
+        null,
+        "",
+        `/flow/${storageID}?key=${key}&storage=${storage_type}`
+      );
 
       console.log(resultTx, "res");
       if (!resultTx) throw Error;
@@ -111,7 +137,7 @@ export default function ButtonVersions({
       window.location.reload();
       // onRefresh(); // todo: fix onRefresh
     } catch (error) {
-      console.log(error);
+      console.log(error, 'error contract');
     }
   };
   // dialogApprove
@@ -130,7 +156,7 @@ export default function ButtonVersions({
 
   const [tabs, setTab] = useState(1);
   const dataArray = tabs ? data?.versionSuggested : data?.versions;
-
+  const [currentStorage, setStorage] = useState(null)
   return (
     <div className=" m-2 float-right ">
       <ModalDialog
@@ -146,7 +172,12 @@ export default function ButtonVersions({
           onClose,
           isOpened,
         }}
-      />
+      >
+
+        <StorageOption
+          {...{ currentStorage, setStorage, isCreate: false }}
+        />
+      </ModalDialog>
       <Popover className="relative">
         {({ open }) => (
           <>

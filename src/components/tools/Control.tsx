@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   addEdge,
   Connection,
@@ -28,6 +28,7 @@ import ipfs from "@/helpers/utils/ipfs";
 import { WebBundlr } from "@bundlr-network/client";
 import useBundlr from "@/helpers/hooks/useBundlr";
 import useFund from "@/helpers/hooks/useFund";
+import StorageOption from "./StorageOption";
 
 
 
@@ -54,11 +55,11 @@ export default function Control({
   const { account, library, chainId } = useWeb3React();
 
   // or use keyContract
-  const { key } = useFlow();
-  // console.log(key, 'key', keyContract)
+  const { key, storageType } = useFlow();
 
   const [reason, setReason] = useState("");
   const [versionName, setVersionName] = useState("v");
+  const { _upload } = useFund()
 
   const onEdit = () => {
     // alert('are you sure want to edit?')
@@ -82,8 +83,17 @@ export default function Control({
   // use from data parent which contracts
   // refactor  to accept other chain than evm
   const _contract = useDynamicContract(maticAddress, localAbi, true);
-  console.log(_contract, 'CONTRACT MATIC')
-  const bundlr = useBundlr()
+
+  const [currentStorage, setStorage] = useState(
+    //get from flow if !isCreate
+    null
+    // {
+    //   name: "ARWEAVE",
+    //   value: 2,
+    //   description: "Permanent data storage, Not available in testnet",
+    // }
+  )
+
 
 
   // const [loadingTx, setLoadingTx] = useState(false)
@@ -91,10 +101,11 @@ export default function Control({
   //bug on refresh?
   const onSave = async (reason?: string) => {
     // onCreate ->
-
+    //alert connect metamask
+    //alert currentStorage cannot be null
     //alert wallet to have same network first
     //check contract network === current network === saved network in data
-
+    if (!currentStorage && isCreate) return alert("Select storage!")
     if (!elements?.length) return alert(`Empty ?`);
 
     // confirmation -> what to update? description, title
@@ -230,38 +241,58 @@ export default function Control({
      * 3. calculate
      */
     //ALERT for mainnet -> if funding is not bigger than current price
-
     // alert(getPrice(JSON.stringify(payloadFlow)))
+
 
 
     try {
 
-      /**URGENT: ipfs for testnet, polygon for arweave */
-      // await store.set("flows", payloadFlow);
-      const ipfsId = await ipfs.add(JSON.stringify(payloadFlow));
-      // console.log(ipfsId, "ipfsId");
-      const arweaveId = await _upload(payloadFlow);
+      let storageID;
+      let storageURL;
+      const storage_type = !!isCreate ? currentStorage?.name : storageType
 
+      const isArweave = storage_type === 'ARWEAVE'
+      try {
+        if (isArweave) {
+          const arweaveId = await _upload(payloadFlow);
+          storageID = arweaveId
+          storageURL = `https://arweave.net/${arweaveId}`
+
+        } else {
+          const ipfsId = await ipfs.add(JSON.stringify(payloadFlow));
+          storageID = ipfsId
+          storageURL = `https://ipfs.io/ipfs/${ipfsId.path}`
+        }
+      } catch (error) {
+        alert('Storage error')
+      }
+
+
+      const storageInfo = {
+        storageID,
+        storageURL,
+        chainId,
+        storage_type, //storage_type
+        networks: getNetworkName(chainId),  //isCreate
+      }
+      console.log(storageInfo, 'storageInfo')
+
+      const dataInContract = {
+        title: currentFlow?.title, //isCreate
+        description: currentFlow?.description, //isCreate
+        tags: [],
+      }
 
 
       let resultTx;
 
       if (isCreate) {
         const payloadContract = {
-          ipfsPath: ipfsId.path,
-          ipfsUrl: `https://ipfs.io/ipfs/${ipfsId.path}`,
-          chainId,
-          // arweaveId,
-          // arweaveUrl: `https://arweave.net/${arweaveId}`
-          networks: getNetworkName(chainId),  //isCreate
-          title: currentFlow?.title, //isCreate
-          description: currentFlow?.description, //isCreate
-          tags: [],
+          ...storageInfo,
+          ...dataInContract,
           createdAt, //isCreate
           // poolsId: //ipfsPoolId
-          frozenData: 'ipfs' // arweave/filecoin/ipfs
         };
-        console.log(_contract, "_contract");
 
         //use typechain to avoid issue
         resultTx = await _contract.addFlow(JSON.stringify(payloadContract));
@@ -271,21 +302,12 @@ export default function Control({
           `Project Saved in blockchain, Tx hash: ${resultTx?.hash}`
         );
       } else {
-        console.log("UPDATING TX", key);
         const payloadContract = {
-          ipfsPath: ipfsId.path,
-          ipfsUrl: `https://ipfs.io/ipfs/${ipfsId.path}`,
-          chainId,
-          // arweaveId,
-          // arweaveUrl: `https://arweave.net/${arweaveId}`
-          networks: getNetworkName(chainId), //isCreate
-          title: currentFlow?.title, //isCreate
-          description: currentFlow?.description, //isCreate
-          tags: [],
+          ...storageInfo,
+          ...dataInContract,
           createdAt: currentFlow?.createdAt,
           updatedAt: createdAt, //current time
           // poolsId: //ipfsPoolId
-          frozenData: 'ipfs' // arweave/filecoin/ipfs
         };
         // console.log(_contract, "_contract");
 
@@ -300,7 +322,7 @@ export default function Control({
         window.history.replaceState(
           null,
           "",
-          `/flow/${ipfsId.path}?key=${key}`
+          `/flow/${storageID}?key=${key}&type=${storage_type}`
         );
         // todo: refresh from useFetch
         // window.location.reload()
@@ -326,8 +348,7 @@ export default function Control({
         position: "top-right",
       });
 
-
-    // if (isCreate) router.push(`/`);
+    if (isCreate) router.push(`/`);
   };
 
   const [isOpened, setOpen] = useState(false);
@@ -340,22 +361,19 @@ export default function Control({
   }
 
 
-  const { currentFund, getPrice, _upload } = useFund()
 
-  const CheckFund = () => {
-    return (
-      <div className="text-sm text-rose-400 my-2 font-medium">
-        Current Fund: {currentFund}
-      </div>
-    )
 
-  }
 
+
+
+  //todo
+  //disable Confirm if testnet chain for arweave
+  //alert if network from data not same with 
   if (!isCreate) {
     return (
       <>
         <ModalDialog
-          title={`Save confirmation`}
+          title={`Update confirmation`}
           desc={`Are you sure you want to save this Flow?`}
           // confirmText
           onConfirm={() => {
@@ -370,7 +388,9 @@ export default function Control({
           hasChildren
         >
           <div className="my-2">
-            <CheckFund />
+            <StorageOption
+              {...{ currentStorage, setStorage, isCreate }}
+            />
             <Input
               label={`Version Tag:`}
               onChange={(v: string) => setVersionName(v)}
@@ -425,12 +445,14 @@ export default function Control({
     );
   }
 
+  //CREATE
   return (
     <>
       <ModalDialog
-        title={`Save confirmation`}
-        desc={`Are you sure you want to save this Flow?`}
+        title={`Let's Save it !!🚨`}
+        // desc={`Are you sure you want to save this Flow??`}
         // confirmText
+        hasChildren
         onConfirm={() => {
           onSave();
           onClose();
@@ -440,7 +462,15 @@ export default function Control({
           onOpen,
           isOpened,
         }}
-      />
+      >
+        <StorageOption
+          {...{ currentStorage, setStorage, isCreate }}
+        />
+        {/* explain ipfs wont be permanent */}
+        {/* choose arweave or ipfs (testnet only available for ipfs) -> if arweave shows fund, add fund */}
+        {/* and calculate  */}
+        {/* calculate if less than,  */}
+      </ModalDialog>
       <Controls showInteractive={false}>
         {editStatus && (
           <ControlButton onClick={unlocked ? setLock : setUnlock}>

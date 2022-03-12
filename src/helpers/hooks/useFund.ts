@@ -7,7 +7,8 @@ export default function useFund() {
     const bundlr = useBundlr()
     const { account, library, chainId } = useWeb3React();
 
-    // const [price, setPrice] = useState<number | string>(`loading...`)
+
+    const [price, setPrice] = useState<number | string>(`loading...`)
 
     const getFund = async () => {
         if (!!account && !!bundlr) {
@@ -28,9 +29,11 @@ export default function useFund() {
                     `matic` as string,
                     Buffer.from(value, "utf8").length
                 );
+                const p = Number(bundlr?.utils.unitConverter(res.toString()).toString()).toFixed(5)
 
-                console.log(Number(bundlr?.utils.unitConverter(res.toString()).toString()).toFixed(5), 'price is')
-                return Number(bundlr?.utils.unitConverter(res.toString()).toString()).toFixed(5)
+                //todo: use currency from bundlr
+                setPrice(`${p} Matic`)
+                return p
             } catch (error) {
                 console.log(error, 'eerorr')
                 return `Error...`
@@ -40,33 +43,35 @@ export default function useFund() {
     }
 
     const _upload = async (value: any) => {
+
         if (!!account && !!bundlr) {
             try {
+                await bundlr?.ready()
+                if (!bundlr?.address) alert("Something wrong")
+
                 const res = await bundlr?.uploader
                     .upload(
                         Buffer.from(JSON.stringify(value), "utf8"),
-                        [
-                            { name: "Content-Type", value: "application/elixir" },
-                        ]
+                        [{ name: "Content-Type", value: "application/json" },]
                     )
 
-                console.log(res?.data)
                 return res?.data?.id
             } catch (error) {
-                console.log(error, 'eerorr')
-                return `Error...`
 
+                return `Error...`
             }
         } else return `Account error`
     }
 
     useEffect(() => {
+        // console.log(bundlr, 'bundlr')
         getFund()
     }, [bundlr, account])
 
     return {
         currentFund,
         getPrice,
+        priceEst: price,
         _upload
     }
 }

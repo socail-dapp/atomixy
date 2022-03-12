@@ -5,6 +5,7 @@ export const localAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 export const localAbi = LocalToken.abi;
 
 export const maticAddress = "0x0646D535ee5EDb9FaFcceC2e42809Bf74A5A96b8";
+export const rinkebyAddress = "0xFEE4c702724D1Eb66E10cB2b85B5e4CEfB30FDb4";
 export const maticAbi = LocalToken.abi;
 
 
@@ -23,6 +24,13 @@ export const supportedNetwork = [
     //local
     `Local`,
 ]
+export const colorNetworkName = [
+    `text-gray-700`, `text-purple-600`,
+    //testnet
+    `Ropsten`, `text-orange-300`, `Goerli`, `Kovan`, `Mumbai`,
+    //local
+    `text-green-400`,
+]
 
 export const isSupported = (chainId: number) => supportedChainIds.indexOf(chainId) === -1
 export const getNetworkName = (chainId: number | undefined) => {
@@ -30,5 +38,12 @@ export const getNetworkName = (chainId: number | undefined) => {
         return `Not Supported`
     } else {
         return supportedNetwork[supportedChainIds.indexOf(chainId)]
+    }
+}
+export const getNetworkColorName = (chainId: number | undefined) => {
+    if (supportedChainIds.indexOf(chainId) === -1) {
+        return `text-red`
+    } else {
+        return colorNetworkName[supportedChainIds.indexOf(chainId)]
     }
 }

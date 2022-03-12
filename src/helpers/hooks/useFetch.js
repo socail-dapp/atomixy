@@ -10,12 +10,16 @@ const fetcher = (url) => axios.get(url).then((res) => res.data);
  * v1 load from localstorage,
  * todo: migrate it to blockchain
  */
-export default function useFetch(slug) {
+export default function useFetch(slug, storage) {
   // const [loading, setLoading] = useState(false);
   // const [data, setData] = useState(null);
   const [selectedVersion, setVersion] = useState(null);
+  const url =
+    storage === "IPFS" || storage === "ipfs"
+      ? `https://ipfs.io/ipfs/${slug}`
+      : `https://arweave.net/${slug}`;
 
-  const { data, error } = useSWR(`https://ipfs.io/ipfs/${slug}`, fetcher);
+  const { data, error } = useSWR(url, fetcher);
   // const loading = !error && !data
   console.log(data, "data useFEETCH", slug);
 
