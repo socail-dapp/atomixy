@@ -5,7 +5,13 @@ export const localAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 export const localAbi = LocalToken.abi;
 
 export const maticAddress = "0x0646D535ee5EDb9FaFcceC2e42809Bf74A5A96b8";
+
+//testnet
 export const rinkebyAddress = "0xFEE4c702724D1Eb66E10cB2b85B5e4CEfB30FDb4";
+export const getRopsten = ""
+export const getGoerli = ""
+export const getKovan = ""
+export const getAvaxTest = ""
 export const maticAbi = LocalToken.abi;
 
 
