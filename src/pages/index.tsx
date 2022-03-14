@@ -5,13 +5,12 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
-import moment from 'moment'
+import moment from "moment";
 import { getNetworkName, getNetworkColorName } from "@/helpers/utils/networks";
 const Home: NextPage = () => {
   // const { showModal, closeModal } = useModal()
 
   const { data, loading } = useLoadList();
-
 
   return (
     <Layout>
@@ -25,11 +24,9 @@ const Home: NextPage = () => {
         <div className="text-6xl text-white font-semibold">
           Atomixy - MultiChain Crowd Sourcing
           <br />
-
         </div>
         <div className="text-xl text-gray-200">
-
-          Fully decentralised mapping tools to help you visualizing informations 
+          Fully decentralised mapping tools to help you visualizing informations
         </div>
         <br />
         <br />
@@ -42,7 +39,6 @@ const Home: NextPage = () => {
         {/* IMAGES OF FLOW examples */}
         <br />
         <div className=" grid grid-cols-2 gap-2">
-
           <div className=" overflow-scroll">
             {loading && <div className="text-white text-3xl">Loading...</div>}
 
@@ -66,17 +62,20 @@ export default Home;
 // #232b2b
 
 const List = (props) => {
-  console.log(props, 'props')
+  console.log(props, "props");
 
   // also setKey to zustand, and reset at this page? how about multiple page?
   return (
     <Link
       //send id ipfs, query -> network
-      href={`/flow/${props?.storageID}?key=${props.indexID}&storage=${props?.storage_type}`}
+      href={`/flow/${props?.storageID}?key=${props.indexID}&storage=${props?.storage_type}&chainid=${props?.chainId}`}
       // href={`/flow/${props?.ipfsPath}?key=${props.index}&storage=${props?.frozenData}`}
     >
       <div className="p-4 mb-4 mx-1 bg-white rounded-md  cursor-pointer">
-        <div className="text-gray-500 text-xs "> {moment.unix(props?.createdAt).fromNow()}</div>
+        <div className="text-gray-500 text-xs ">
+          {" "}
+          {moment.unix(props?.createdAt).fromNow()}
+        </div>
 
         <div className="text-gray-700 font-semibold ">{props?.title}</div>
         <div className="text-gray-500">{props.description}</div>
@@ -87,11 +86,20 @@ const List = (props) => {
           <div className="font-medium ">{props?.storage_type}</div>
 
           {/* ${getNetworkColorName(props?.chainId)} */}
-          <div className={`text-md text-purple-600 `} >{getNetworkName(props?.chainId)}</div>
+          <div className={`text-md text-purple-600 `}>
+            {getNetworkName(props?.chainId)}
+          </div>
         </div>
-
       </div>
     </Link>
   );
 };
 
+// chainId: 137
+// createdAt: 1647060511
+// index: 2
+// indexID: 0
+// networks: "Polygon"
+// storageID: "Error..."
+// storageURL: "https://arweave.net/Error..."
+// storage_type: "ARWEAVE"

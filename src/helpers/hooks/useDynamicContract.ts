@@ -16,17 +16,17 @@ export default function useDynamicContract(
 
   // console.log(_provider, '_provider', ABI);
 
-  useEffect(() => {
-    console.log(
-      account,
-      library?.getSigner(account),
-      // library,
-      chainId,
-      "account DCONS",
-      account ? "exist account" : "null ",
-      isMatchedNetwork ? "berhak call" : "cant call "
-    );
-  }, [address, isMatchedNetwork, account, ABI]);
+  // useEffect(() => {
+  //   console.log(
+  //     account,
+  //     library?.getSigner(account),
+  //     // library,
+  //     chainId,
+  //     "account DCONS",
+  //     account ? "exist account" : "null ",
+  //     isMatchedNetwork ? "berhak call" : "cant call "
+  //   );
+  // }, [address, isMatchedNetwork, account, ABI]);
 
   return useMemo(() => {
     if (!address || !ABI) {

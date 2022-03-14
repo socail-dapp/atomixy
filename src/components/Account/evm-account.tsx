@@ -73,7 +73,8 @@ const Account = ({ triedToEagerConnect }: AccountProps) => {
   return (
     <div className="flex m-2 row align-middle">
       {console.log(getNetworkName(chainId), `getNetworkName(chainId)`)}
-      Network: {getNetworkName(chainId)} &nbsp; &nbsp; &nbsp; | &nbsp; &nbsp; &nbsp;
+      Network: {getNetworkName(chainId)} &nbsp; &nbsp; &nbsp; | &nbsp; &nbsp;
+      &nbsp;
       {/* check network metamask === with current flow network */}
       <a
         {...{

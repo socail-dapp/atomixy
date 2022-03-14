@@ -21,7 +21,12 @@ import { v4 as uuidv4 } from "uuid";
 import toast from "react-hot-toast";
 import { useWeb3React } from "@web3-react/core";
 import useDynamicContract from "@/helpers/hooks/useDynamicContract";
-import { getNetworkName, localAbi, localAddress, maticAddress } from "@/helpers/utils/networks";
+import {
+  getNetworkName,
+  localAbi,
+  localAddress,
+  maticAddress,
+} from "@/helpers/utils/networks";
 import useFlow from "@/helpers/store/useFlow";
 import useFetch from "@/helpers/hooks/useFetch";
 import ipfs from "@/helpers/utils/ipfs";
@@ -29,8 +34,7 @@ import { WebBundlr } from "@bundlr-network/client";
 import useBundlr from "@/helpers/hooks/useBundlr";
 import useFund from "@/helpers/hooks/useFund";
 import StorageOption from "./StorageOption";
-
-
+import useSelectContract from "@/helpers/hooks/useSelectContract";
 
 export default function Control({
   data,
@@ -59,7 +63,7 @@ export default function Control({
 
   const [reason, setReason] = useState("");
   const [versionName, setVersionName] = useState("v");
-  const { _upload } = useFund()
+  const { _upload } = useFund();
 
   const onEdit = () => {
     // alert('are you sure want to edit?')
@@ -82,7 +86,8 @@ export default function Control({
   // function switch contract?
   // use from data parent which contracts
   // refactor  to accept other chain than evm
-  const _contract = useDynamicContract(maticAddress, localAbi, true);
+  // const _contract = useDynamicContract(maticAddress, localAbi, true);
+  const _contract = useSelectContract();
 
   const [currentStorage, setStorage] = useState(
     //get from flow if !isCreate
@@ -92,20 +97,19 @@ export default function Control({
     //   value: 2,
     //   description: "Permanent data storage, Not available in testnet",
     // }
-  )
-
-
+  );
 
   // const [loadingTx, setLoadingTx] = useState(false)
   //bug on versions
   //bug on refresh?
   const onSave = async (reason?: string) => {
+    // if chainID not supported alert -> supp now: 137, 4, 31337
     // onCreate ->
     //alert connect metamask
     //alert currentStorage cannot be null
     //alert wallet to have same network first
     //check contract network === current network === saved network in data
-    if (!currentStorage && isCreate) return alert("Select storage!")
+    if (!currentStorage && isCreate) return alert("Select storage!");
     if (!elements?.length) return alert(`Empty ?`);
 
     // confirmation -> what to update? description, title
@@ -179,7 +183,9 @@ export default function Control({
     // console.log(currentFlow?.versionByUser[ACCOUNT], 'currentFlow?.versionByUser[ACCOUNT]')
     // C. each users also recorded
     const prevVersionByUser = !isCreate
-      ? !!currentFlow?.versionByUser[ACCOUNT] ? currentFlow?.versionByUser[ACCOUNT] : []
+      ? !!currentFlow?.versionByUser[ACCOUNT]
+        ? currentFlow?.versionByUser[ACCOUNT]
+        : []
       : [];
     prevVersionByUser.unshift(commitFlow);
 
@@ -217,7 +223,7 @@ export default function Control({
       ...(isCreate ? forCreation : forUpdating),
       chainId,
       networks: getNetworkName(chainId), //isCreate
-      appVersion: 'v1-BETA'
+      appVersion: "v1-BETA",
 
       // networks:
       // contract_address
@@ -233,7 +239,6 @@ export default function Control({
 
     // console.log(payloadFlow, "FINAL CHECK", isCreate);
 
-
     /**
      * flow for mainnet using arweave
      * 1. check fund
@@ -243,46 +248,41 @@ export default function Control({
     //ALERT for mainnet -> if funding is not bigger than current price
     // alert(getPrice(JSON.stringify(payloadFlow)))
 
-
-
     try {
-
       let storageID;
       let storageURL;
-      const storage_type = !!isCreate ? currentStorage?.name : storageType
+      const storage_type = !!isCreate ? currentStorage?.name : storageType;
 
-      const isArweave = storage_type === 'ARWEAVE'
+      const isArweave = storage_type === "ARWEAVE";
       try {
         if (isArweave) {
           const arweaveId = await _upload(payloadFlow);
-          storageID = arweaveId
-          storageURL = `https://arweave.net/${arweaveId}`
-
+          storageID = arweaveId;
+          storageURL = `https://arweave.net/${arweaveId}`;
         } else {
           const ipfsId = await ipfs.add(JSON.stringify(payloadFlow));
-          storageID = ipfsId
-          storageURL = `https://ipfs.io/ipfs/${ipfsId.path}`
+          storageID = ipfsId?.path;
+          storageURL = `https://ipfs.io/ipfs/${ipfsId.path}`;
         }
       } catch (error) {
-        alert('Storage error')
+        console.log(error, "storage error");
+        alert("Storage error");
       }
-
 
       const storageInfo = {
         storageID,
         storageURL,
         chainId,
         storage_type, //storage_type
-        networks: getNetworkName(chainId),  //isCreate
-      }
-      console.log(storageInfo, 'storageInfo')
+        networks: getNetworkName(chainId), //isCreate
+      };
+      console.log(storageInfo, "storageInfo");
 
       const dataInContract = {
         title: currentFlow?.title, //isCreate
         description: currentFlow?.description, //isCreate
         tags: [],
-      }
-
+      };
 
       let resultTx;
 
@@ -360,15 +360,9 @@ export default function Control({
     setOpen(false);
   }
 
-
-
-
-
-
-
   //todo
   //disable Confirm if testnet chain for arweave
-  //alert if network from data not same with 
+  //alert if network from data not same with
   if (!isCreate) {
     return (
       <>
@@ -388,9 +382,7 @@ export default function Control({
           hasChildren
         >
           <div className="my-2">
-            <StorageOption
-              {...{ currentStorage, setStorage, isCreate }}
-            />
+            <StorageOption {...{ currentStorage, setStorage, isCreate }} />
             <Input
               label={`Version Tag:`}
               onChange={(v: string) => setVersionName(v)}
@@ -463,9 +455,7 @@ export default function Control({
           isOpened,
         }}
       >
-        <StorageOption
-          {...{ currentStorage, setStorage, isCreate }}
-        />
+        <StorageOption {...{ currentStorage, setStorage, isCreate }} />
         {/* explain ipfs wont be permanent */}
         {/* choose arweave or ipfs (testnet only available for ipfs) -> if arweave shows fund, add fund */}
         {/* and calculate  */}

@@ -17,7 +17,6 @@ import CreateTools from "@/components/nodes/CreateTools";
 import Control from "@/components/tools/Control";
 import ButtonCharts from "../Charts/ButtonCharts";
 
-
 function getRandomInt(max) {
   return Math.floor(Math.random() * max);
 }
@@ -36,8 +35,6 @@ export default ({
   const { currentNodeWindow, resetNodeWindow, search } = useStore();
   const lock = useStore((state) => state.lock);
 
-
-
   // reconstruct element (or map flow) to have a Component inside object
   const elems = useMemo(
     () =>
@@ -50,17 +47,21 @@ export default ({
             ...restItem,
             style: {
               ...style,
-              opacity: detail?.title.includes(search) ||
+              opacity:
+                detail?.title.includes(search) ||
                 detail?.description.includes(search) ||
                 detail?.titleCapsule.includes(search)
-                ? 1 : 0.2
+                  ? 1
+                  : 0.2,
             },
             detail, // dont forget to  pass for future references/update
             data: {
               label: (
                 <NodeCapsule
                   {...{
-                    detail, id: item?.id, position: item?.position,
+                    detail,
+                    id: item?.id,
+                    position: item?.position,
                   }}
                 />
               ),
@@ -69,8 +70,7 @@ export default ({
 
           // the connector or link
         } else return item;
-      })
-    ,
+      }),
     [data, search]
   ); // forr versioning
 
@@ -117,6 +117,7 @@ export default ({
                     Version Update click here
                 </div>
             )} */}
+
       {lock && (
         <div className="absolute  w-full bottom-0">
           <div className="flex justify-center align-middle ">
@@ -175,4 +176,3 @@ export default ({
     </div>
   );
 };
-
