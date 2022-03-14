@@ -1,13 +1,14 @@
 import LocalToken from "@/eth-sdk/abis/localhost/Token.json";
-import config from "@/eth-sdk/eth-sdk.config";
+// import config from "@/eth-sdk/eth-sdk.config";
 
-export const localAddress = "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9";
 export const localAbi = LocalToken.abi;
+export const localAddress = process.env.NEXT_LOCAL_ADDRESS;
 
-export const maticAddress = "0x0646D535ee5EDb9FaFcceC2e42809Bf74A5A96b8";
+//mainnet
+export const maticAddress = process.env.NEXT_POLYGON_ADDRESS
 
 //testnet
-export const rinkebyAddress = "0xFEE4c702724D1Eb66E10cB2b85B5e4CEfB30FDb4";
+export const rinkebyAddress = process.env.NEXT_RINKEBY_ADDRESS
 export const getRopsten = "";
 export const getGoerli = "";
 export const getKovan = "";
