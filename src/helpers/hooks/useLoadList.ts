@@ -17,6 +17,13 @@ export default function useLoadList() {
   const [state, setState] = useState([]);
   const [loading, setLoading] = useState<boolean>(false);
 
+  console.log(
+    localAddress,
+    maticAddress,
+    rinkebyAddress,
+  )
+
+
   const getLocalData = useDynamicContract(localAddress, localAbi);
   const getMaticData = useDynamicContract(
     maticAddress,
@@ -48,9 +55,9 @@ export default function useLoadList() {
       const list: any = [];
 
       //load local -> refactor
-      for (let i = 0; i < 6; i++) {
+      for (let i = 1; i < 6; i++) {
         const local = await getLocalData?.getFlows(i);
-        console.log(local, "local?");
+        // console.log(local, "local?");
         const matic_data = await getMaticData?.getFlows(i);
 
         // testnet
@@ -61,24 +68,28 @@ export default function useLoadList() {
 
         if (local) {
           const m = JSON.parse(local);
-          list.push({ ...m, indexID: i });
+          list.unshift({ ...m, indexID: i });
+          setState(list)
         }
 
         if (matic_data) {
           const m = JSON.parse(matic_data);
-          list.push({ ...m, indexID: i });
+          list.unshift({ ...m, indexID: i });
+          setState(list)
         }
 
         if (test_rink) {
           const m = JSON.parse(test_rink);
-          list.push({ ...m, indexID: i });
+          list.unshift({ ...m, indexID: i });
+          setState(list)
         }
+
       }
 
       //filter takes long
       const filteredList = list.sort((a, b) => b?.createdAt - a?.createdAt);
       setState(filteredList);
-      console.log(filteredList, "filteredList");
+      // console.log(filteredList, "filteredList");
       setLoading(false);
     } catch (error) {
       console.log(error, "error");

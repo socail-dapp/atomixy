@@ -22,7 +22,7 @@ const Home: NextPage = () => {
       </Head> */}
 
         <div className="text-6xl text-white font-semibold">
-          Atomixy - MultiChain Crowd Sourcing
+          Atomixy - MultiChain Crowd Sourcing, Crowd Funding
           <br />
         </div>
         <div className="text-xl text-gray-200">
