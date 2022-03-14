@@ -2,13 +2,13 @@ import LocalToken from "@/eth-sdk/abis/localhost/Token.json";
 // import config from "@/eth-sdk/eth-sdk.config";
 
 export const localAbi = LocalToken.abi;
-export const localAddress = process.env.NEXT_LOCAL_ADDRESS;
+export const localAddress = process.env.NEXT_PUBLIC_LOCAL_ADDRESS;
 
 //mainnet
-export const maticAddress = process.env.NEXT_POLYGON_ADDRESS
+export const maticAddress = process.env.NEXT_PUBLIC_POLYGON_ADDRESS
 
 //testnet
-export const rinkebyAddress = process.env.NEXT_RINKEBY_ADDRESS
+export const rinkebyAddress = process.env.NEXT_PUBLIC_RINKEBY_ADDRESS
 export const getRopsten = "";
 export const getGoerli = "";
 export const getKovan = "";
