@@ -21,14 +21,12 @@ export default ({ cookies }) => {
 
   return (
     <>
-
       <div className="absolute w-screen flex row justify-between z-10 ">
         {/* dont remove to balance the space-between of 3 items */}
         <div />
         <HeaderWallet minimize />
 
-        <div
-        />
+        <div />
       </div>
       <Wrapper
         {...{
@@ -60,19 +58,18 @@ const default_commit: ICommit = {
 
 // poolsstructured inside of element
 interface IPool {
-  txHash: string
-  blockHash: any
-  chainId: number | string
-  value: any // value donated
-  from: string
-  to: string
-  fee: any
-  createdAt: any
-  network: any
-  nodeId: any
-  nodeTitle: any
+  txHash: string;
+  blockHash: any;
+  chainId: number | string;
+  value: any; // value donated
+  from: string;
+  to: string;
+  fee: any;
+  createdAt: any;
+  network: any;
+  nodeId: any;
+  nodeTitle: any;
 }
-
 
 const default_flow = {
   title: "just created",

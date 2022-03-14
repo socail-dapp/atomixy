@@ -13,6 +13,8 @@ import useWindow from "@/helpers/store/useWindow";
 import FooterEdit from "./FooterEdit";
 import toast from "react-hot-toast";
 import { Resizable } from "re-resizable";
+import useFlow from "@/helpers/store/useFlow";
+import useNodePool from "@/helpers/hooks/useNodePool";
 
 const getNodeId = () => `randomnode_${+new Date()}`;
 
@@ -23,6 +25,7 @@ const defaultDetail = {
   colorBg: "#03dac6",
   colorText: "white",
   titleCapsule: null,
+  poolAddress: null,
 
   // style: { backgrounColor: 'orange', background: `#ff0266`, color: 'white', border: 0 }
 };
@@ -39,6 +42,8 @@ const NodeWindow = ({
   isCreate = false,
 }: any) => {
   // console.log(currentDetail, "currentDetailcurrentDetail");
+
+  //
 
   const { setEditWindow } = useWindow();
   useEffect(() => {
@@ -76,6 +81,9 @@ const NodeWindow = ({
   // this will also record in the logs
   const [edit, setEdit] = useState(canEdit);
 
+  const isUpdating = currentDetail?.id;
+  const id = isUpdating ? currentDetail?.id : `rn-${getNodeId()}`;
+
   const onAdd = useCallback(() => {
     // bug: if update
     //check window props requirement EXIST
@@ -83,8 +91,6 @@ const NodeWindow = ({
       return toast.error("Important field is missing");
 
     // console.log(currentDetail, 'CURRENT DETAIL UPDATE')
-    const isUpdating = currentDetail?.id;
-    const id = isUpdating ? currentDetail?.id : `rn-${getNodeId()}`;
 
     const position = !!currentDetail?.position
       ? currentDetail?.position
@@ -149,20 +155,22 @@ const NodeWindow = ({
     [setElements, detail]
   );
   const { tabs } = useWindow();
-  const [width, setWidth] = useState('50vw');
+  const [width, setWidth] = useState("50vw");
+
+  const { poolData, totalAmount } = useNodePool(id);
 
   return (
     <Resizable
       style={{
-        position: 'absolute',
+        position: "absolute",
         bottom: 0,
         zIndex: 30,
         background: `darkgrey`,
         right: 0,
         padding: 3,
-        borderRadius: 6
+        borderRadius: 6,
       }}
-      size={{ height: '100%', width }}
+      size={{ height: "100%", width }}
       // maxHeight={`90vh`}
       minHeight={`40vh`}
       minWidth={`30vw`}
@@ -171,7 +179,6 @@ const NodeWindow = ({
         setWidth(width + d.width);
       }}
     >
-
       <div
         className={`
       ${edit ? `bg-white` : `bg-gradient-to-r from-gray-300 to-zinc-200`}
@@ -180,6 +187,13 @@ const NodeWindow = ({
       >
         {/* overflow visible if it's on detail-editing */}
 
+        <div className="absolute top-5 float-left ">
+          <div className="flex row backdrop-blur-md rounded-sm border px-2 text-orange-700 font-medium">
+            {/* get current eth price from chainlink */}
+            Total Grants:{" "}
+            {!!poolData && `${totalAmount} Ether ($${totalAmount * 2539})`}
+          </div>
+        </div>
         <div className="absolute right-5 top-5 float-right cursor-pointer">
           <div className="flex row">
             <Close onClick={onClose} />
@@ -194,7 +208,12 @@ const NodeWindow = ({
           />
         )}
         {edit && (
-          <DetailDisplay {...{ setEdit: () => setEdit(!edit), detail }} />
+          <DetailDisplay
+            {...{
+              setEdit: () => setEdit(!edit),
+              detail /** stated on above */,
+            }}
+          />
         )}
         {/* todo: update logic iscreate here, use real comments */}
         {edit && !isCreate && <Comment />}

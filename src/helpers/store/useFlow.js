@@ -16,6 +16,8 @@ const useFlow = create((set, get) => {
     setStorageType: (value) => set({ storageType: value }),
 
     //  networks
+    chainId: null,
+    setChainId: (value) => set({ chainId: value }),
   };
 });
 

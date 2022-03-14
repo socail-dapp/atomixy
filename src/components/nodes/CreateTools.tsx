@@ -4,7 +4,7 @@ import useStore from "@/helpers/store";
 import NodeWindow from "../window/NodeWindow";
 import VerticalSelect from "../forms/RadioGroup";
 // import cookieCutter from 'cookie-cutter'
-import { Switch } from '@headlessui/react'
+import { Switch } from "@headlessui/react";
 
 export default function ({ viewOnly, elements, setElements }) {
   const [showWindow, setShowWindow] = useState(null);
@@ -16,11 +16,11 @@ export default function ({ viewOnly, elements, setElements }) {
         <div className="pb-4 font-medium text-lg font-mono">Tools</div>
         <button
           className="p-5 rounded-md w-full  text-gray-50 bg-gradient-to-r from-gray-500 to-zinc-400"
-        // if already shown, dont?
-        onClick={() => setShowWindow(true)}
-      >
-        Add Node
-      </button>
+          // if already shown, dont?
+          onClick={() => setShowWindow(true)}
+        >
+          Add Node
+        </button>
         <br />
 
         <br />
@@ -28,10 +28,12 @@ export default function ({ viewOnly, elements, setElements }) {
         <VerticalSelect
           value={connector[0]}
           // label="Connector*"
-          onChange={() => { }}
+          onChange={() => {}}
           options={connector}
         />
-        <div className="my-4 font-medium text-xs  text-rose-400 font-mono">*Currently only normal available</div>
+        <div className="my-4 font-medium text-xs  text-rose-400 font-mono">
+          *Currently only normal available
+        </div>
 
         {/* <div className="flex row justify-between">
           <div className="font-medium text-sm font-mono">Undirectional: </div>
@@ -43,7 +45,6 @@ export default function ({ viewOnly, elements, setElements }) {
           />
         </div> */}
       </div>
-
 
       {/* todo: dialog or modal for  */}
       {showWindow && (
@@ -74,5 +75,4 @@ const connector = [
     value: 2,
     description: "With text",
   },
-
 ];

@@ -15,31 +15,28 @@ import { FC, useEffect, useMemo } from "react";
 import Layout from "@/components/Layout";
 import { Web3ReactProvider } from "@web3-react/core";
 import getLibrary from "@/helpers/evm/getLibrary";
-import ProgressBar from '@badrap/bar-of-progress'
+import ProgressBar from "@badrap/bar-of-progress";
 import { useRouter } from "next/router";
-
 
 const progress = new ProgressBar({
   size: 3,
-  color: '#2e298b',
+  color: "#2e298b",
   delay: 100,
-  className: 'progress',
-})
-
+  className: "progress",
+});
 
 // Use require instead of import since order matters
 require("@solana/wallet-adapter-react-ui/styles.css");
 // require("../styles/globals.css");
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const router = useRouter()
+  const router = useRouter();
 
   useEffect(() => {
-    router.events.on('routeChangeStart', progress.start)
-    router.events.on('routeChangeComplete', progress.finish)
-    router.events.on('routeChangeError', progress.finish)
-  }, [router.events])
-
+    router.events.on("routeChangeStart", progress.start);
+    router.events.on("routeChangeComplete", progress.finish);
+    router.events.on("routeChangeError", progress.finish);
+  }, [router.events]);
 
   // Can be set to 'devnet', 'testnet', or 'mainnet-beta'
   const network = WalletAdapterNetwork.Devnet;

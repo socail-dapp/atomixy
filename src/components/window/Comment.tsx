@@ -5,6 +5,7 @@ export default () => {
     <div>
       <br />
       <div className="w-full  border border-slate-300" />
+      <div className="text-red-900 text-xs">*On development</div>
       {MOCK_COMMENTS.map((item, i) => (
         <Comments key={i} {...{ item }} />
       ))}
@@ -101,42 +102,32 @@ const DownArrow = () => (
 const MOCK_COMMENTS = [
   {
     name: "No_brain_no_life",
-    comments: `Most people from both countries dislike the conflict. They don't care about about Putin's weird ideas or goals. Are there Russians and Ukrainians who dislike the other? Sure. I find that most just dislike Putin.`,
+    comments: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, t enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum`,
     upvotes: 200,
   },
   {
     name: "No_brain_no_life",
-    comments: `Most people from both countries dislike the conflict. They don't care about about Putin's weird ideas or goals. Are there Russians and Ukrainians who dislike the other? Sure. I find that most just dislike Putin.`,
+    comments: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, t enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum`,
     upvotes: 200,
   },
   {
     name: "No_brain_no_life",
-    comments: `Most people from both countries dislike the conflict. They don't care about about Putin's weird ideas or goals. Are there Russians and Ukrainians who dislike the other? Sure. I find that most just dislike Putin.`,
+    comments: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, t enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum`,
     upvotes: 200,
   },
   {
     name: "No_brain_no_life",
-    comments: `Most people from both countries dislike the conflict. They don't care about about Putin's weird ideas or goals. Are there Russians and Ukrainians who dislike the other? Sure. I find that most just dislike Putin.`,
+    comments: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, t enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum`,
     upvotes: 200,
   },
   {
     name: "No_brain_no_life",
-    comments: `Most people from both countries dislike the conflict. They don't care about about Putin's weird ideas or goals. Are there Russians and Ukrainians who dislike the other? Sure. I find that most just dislike Putin.`,
+    comments: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, t enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum`,
     upvotes: 200,
   },
   {
     name: "No_brain_no_life",
-    comments: `Most people from both countries dislike the conflict. They don't care about about Putin's weird ideas or goals. Are there Russians and Ukrainians who dislike the other? Sure. I find that most just dislike Putin.`,
-    upvotes: 200,
-  },
-  {
-    name: "No_brain_no_life",
-    comments: `Most people from both countries dislike the conflict. They don't care about about Putin's weird ideas or goals. Are there Russians and Ukrainians who dislike the other? Sure. I find that most just dislike Putin.`,
-    upvotes: 200,
-  },
-  {
-    name: "No_brain_no_life",
-    comments: `Most people from both countries dislike the conflict. They don't care about about Putin's weird ideas or goals. Are there Russians and Ukrainians who dislike the other? Sure. I find that most just dislike Putin.`,
+    comments: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, t enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum`,
     upvotes: 200,
   },
 ];

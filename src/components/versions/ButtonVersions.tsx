@@ -10,11 +10,16 @@ import useStore from "@/helpers/store";
 import { shortenHex } from "@/helpers/utils/evm";
 import { useWeb3React } from "@web3-react/core";
 import useDynamicContract from "@/helpers/hooks/useDynamicContract";
-import { getNetworkName, localAbi, localAddress } from "@/helpers/utils/networks";
+import {
+  getNetworkName,
+  localAbi,
+  localAddress,
+} from "@/helpers/utils/networks";
 import ipfs from "@/helpers/utils/ipfs";
 import useFlow from "@/helpers/store/useFlow";
 import useFund from "@/helpers/hooks/useFund";
 import StorageOption from "../tools/StorageOption";
+import useSelectContract from "@/helpers/hooks/useSelectContract";
 
 export default function ButtonVersions({
   selectedVersion,
@@ -29,13 +34,14 @@ export default function ButtonVersions({
   const { onRefresh } = useFetch();
   const { currentFlow: data, addFlow } = useStore();
   const { key, storageType } = useFlow();
-  const { _upload } = useFund()
+  const { _upload } = useFund();
 
   // console.log(data, 'DATA FROM VERSIONS check');
   // function switch contract?
   // use from data parent which contracts
   // refactor  to accept other chain than evm
-  const _contract = useDynamicContract(localAddress, localAbi, true);
+  // const _contract = useDynamicContract(localAddress, localAbi, true);
+  const _contract = useSelectContract();
 
   // item as currentFlow
   const onApprove = async (item) => {
@@ -52,7 +58,7 @@ export default function ButtonVersions({
       ...item,
       approvedBy: ACCOUNT,
       approvedAt: moment().unix(),
-      type: 'approved'
+      type: "approved",
     };
 
     // add approved commit to main versions track
@@ -71,24 +77,23 @@ export default function ButtonVersions({
     try {
       let storageID;
       let storageURL;
-      const storage_type = storageType
+      const storage_type = storageType;
 
-      const isArweave = storage_type === 'ARWEAVE'
+      const isArweave = storage_type === "ARWEAVE";
       try {
         if (isArweave) {
           const arweaveId = await _upload(payloadFlow);
-          storageID = arweaveId
-          storageURL = `https://arweave.net/${arweaveId}`
-
+          storageID = arweaveId;
+          storageURL = `https://arweave.net/${arweaveId}`;
         } else {
           const ipfsId = await ipfs.add(JSON.stringify(payloadFlow));
-          storageID = ipfsId
-          storageURL = `https://ipfs.io/ipfs/${ipfsId.path}`
+          storageID = ipfsId?.path;
+          storageURL = `https://ipfs.io/ipfs/${ipfsId.path}`;
         }
       } catch (error) {
-        console.log(error, 'error arweave');
+        console.log(error, "error arweave");
 
-        alert('Storage error')
+        alert("Storage error");
       }
 
       const storageInfo = {
@@ -96,10 +101,9 @@ export default function ButtonVersions({
         storageURL,
         chainId,
         storage_type, //storage_type
-        networks: getNetworkName(chainId),  //isCreate
-      }
-      console.log(storageInfo, 'storageInfo')
-
+        networks: getNetworkName(chainId), //isCreate
+      };
+      console.log(storageInfo, "storageInfo");
 
       const payloadContract = {
         ...storageInfo,
@@ -137,7 +141,7 @@ export default function ButtonVersions({
       window.location.reload();
       // onRefresh(); // todo: fix onRefresh
     } catch (error) {
-      console.log(error, 'error contract');
+      console.log(error, "error contract");
     }
   };
   // dialogApprove
@@ -156,7 +160,7 @@ export default function ButtonVersions({
 
   const [tabs, setTab] = useState(1);
   const dataArray = tabs ? data?.versionSuggested : data?.versions;
-  const [currentStorage, setStorage] = useState(null)
+  const [currentStorage, setStorage] = useState(null);
   return (
     <div className=" m-2 float-right ">
       <ModalDialog
@@ -174,10 +178,7 @@ export default function ButtonVersions({
         }}
         hasChildren
       >
-
-        <StorageOption
-          {...{ currentStorage, setStorage, isCreate: false }}
-        />
+        <StorageOption {...{ currentStorage, setStorage, isCreate: false }} />
       </ModalDialog>
       <Popover className="relative">
         {({ open }) => (

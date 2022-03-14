@@ -18,23 +18,37 @@ import Search from "@/components/Search";
 
 const fetcher = (url) => axios.get(url).then((res) => res.data);
 
-export async function getServerSideProps({ query: { slug, key, storage } }) {
+export async function getServerSideProps({
+  query: { slug, key, storage, chainid },
+}) {
   // chainid -> testing use ipfs, on mainnet -> use arweave
   // 1. load from ipfs
   // ??: also load directly to provider ? optional?
 
+  const url =
+    storage === "IPFS" || storage === "ipfs"
+      ? `https://ipfs.io/ipfs/${slug}`
+      : `https://arweave.net/${slug}`;
 
-  const url = storage === 'IPFS' || storage === 'ipfs' ? `https://ipfs.io/ipfs/${slug}` : `https://arweave.net/${slug}`
+  if (!key || !chainid || !storage) {
+    return {
+      props: {
+        isError: true,
+      },
+    };
+  }
+
   try {
     const dataFlow = await fetcher(url);
     // reconfirm the chainID, so use chainID from here.
 
+    console.log(dataFlow, "local");
     return {
       props: {
         slug,
         keyContract: key,
         storage,
-        // chainId: 31337,
+        chainid,
         fallback: {
           [slug]: dataFlow,
         },
@@ -49,7 +63,14 @@ export async function getServerSideProps({ query: { slug, key, storage } }) {
   }
 }
 
-export default ({ fallback, slug, storage, keyContract, isError = false }) => {
+export default ({
+  fallback,
+  slug,
+  storage,
+  chainid,
+  keyContract,
+  isError = false,
+}) => {
   //useFetch(network?)
 
   // 1. inform user to change network ? (check network from data must be same with network wallet)
@@ -60,10 +81,11 @@ export default ({ fallback, slug, storage, keyContract, isError = false }) => {
   /**
    * clarify if key is same ?
    */
-  const { setKey, setStorageType } = useFlow();
+  const { setKey, setStorageType, setChainId } = useFlow();
   useEffect(() => {
     setKey(keyContract);
-    setStorageType(storage)
+    setStorageType(storage);
+    setChainId(chainid);
   }, []);
 
   if (isError) {

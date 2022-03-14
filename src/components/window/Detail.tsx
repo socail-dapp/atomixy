@@ -1,7 +1,11 @@
+import useSelectContract from "@/helpers/hooks/useSelectContract";
+import useFlow from "@/helpers/store/useFlow";
 import useWindow from "@/helpers/store/useWindow";
-import React, { useState } from "react";
+import { ethers } from "ethers";
+import React, { useCallback, useState } from "react";
 import Button from "../Button";
 import Input from "../forms/Input";
+import ModalDialog from "../ModalDialog";
 import { PanelWrapper } from "./TabWrapper";
 import Tags from "./Tags";
 
@@ -33,13 +37,23 @@ export default function Detail({ isEdit = false, detail, _updateDetail }) {
         {/* TODO: change to markdown */}
         <Input
           label={`Description*`}
-          onChange={(title: string) => _updateDetail("description", title)}
+          onChange={(value: string) => _updateDetail("description", value)}
           style={{ minHeight: 200 }}
           multiline
           isArea
           value={detail?.description}
         />
         <br />
+
+        {/* v2: system vest the grants? -> using system address */}
+        <Input
+          label={`Pool Address (optional)`}
+          onChange={(value: string) => _updateDetail("poolAddress", value)}
+          value={detail?.poolAddress}
+        />
+        {/* add: paste/clipboard */}
+        <br />
+
         {isEdit && (
           <>
             <Input label={`Reason to edit`} onChange={(title: string) => {}} />
@@ -56,7 +70,7 @@ export default function Detail({ isEdit = false, detail, _updateDetail }) {
   );
 }
 
-const options = [`EDIT`, `DONATE`, `SHARE`];
+const options = [`EDIT`, `GRANT`, `SHARE`];
 
 // todo: mockup POOLS, charts, contributors
 export const DetailDisplay = ({ setEdit, detail }) => {
@@ -71,8 +85,91 @@ export const DetailDisplay = ({ setEdit, detail }) => {
 
   const { setEditWindow, isEditWindow } = useWindow();
 
+  const [isOpened, setOpen] = useState(false);
+
+  function onOpen() {
+    setOpen(true);
+  }
+  function onClose() {
+    setOpen(false);
+  }
+
+  const [amount, setAmount] = useState<number>(0);
+
+  // get nodeId
+
+  const _contract = useSelectContract();
+  const { key } = useFlow();
+  // console.log(_contract, 'USEELECT')
+  // const parsedAmount = ethers.utils.parseEther("4")
+
+  const onGrant = useCallback(async () => {
+    if (!_contract) return alert("Connect wallet");
+    if (amount < 0) return alert("amount is way too small?");
+    // console.log(_contract, 'contract',
+    //   detail?.poolAddress,
+    //   ethers.utils.parseEther(String(amount)), //parsed
+    //   Number(key),
+    //   detail?.id
+    // )
+    try {
+      const tx = await _contract?.sendMoney(
+        detail?.poolAddress,
+        ethers.utils.parseEther(String(amount)), //parsed
+        Number(key),
+        detail?.id
+        // address payable receiver, uint256 amount, uint256 _projectId, string memory _nodeId
+      );
+
+      console.log(`Loading - ${tx.hash}`);
+      await tx.wait();
+      console.log(`Success - ${tx.hash}`);
+      onClose();
+      alert(`Success - ${tx.hash}`);
+    } catch (error) {
+      console.log(error, "error grant");
+      onClose();
+      alert("Something error");
+    }
+  }, [_contract, key, amount, detail]);
+
   return (
     <div>
+      <ModalDialog
+        title={`Grant this section`}
+        // desc={`Are you sure you want to save this Flow?`}
+        // confirmText
+        onConfirm={() => {
+          onGrant();
+        }}
+        {...{
+          onClose,
+          onOpen,
+          isOpened,
+        }}
+        hasChildren
+      >
+        <div className="my-2">
+          <Input
+            //TODO: number only
+            label={`set number (ETH)`}
+            onChange={(v: any) => {
+              setAmount(v);
+            }}
+            value={amount}
+            // onKeyPress={(event) => {
+            //   if (!/\d+((\.|,)\d+)?/.test(event.key)) {
+            //     event.preventDefault()
+            //   }
+            // }}
+            type="number"
+            pattern="^(\d*\.)?\d+$"
+          />
+
+          <br />
+        </div>
+      </ModalDialog>
+
       <div className=" text-2xl text-gray-700 font-semibold">
         {detail?.title}
       </div>
@@ -98,6 +195,11 @@ export const DetailDisplay = ({ setEdit, detail }) => {
                 setEditWindow(true);
                 setEdit();
               }
+
+              if (item === "GRANT") {
+                //open modal for grant
+                onOpen();
+              }
             }}
             key={i}
             className="my-3 mr-2 pr-3 text-blue-600 text-sm cursor-pointer"
@@ -106,6 +208,8 @@ export const DetailDisplay = ({ setEdit, detail }) => {
           </div>
         ))}
       </div>
+
+      {/* Donate/Tips/Fund/Grant */}
     </div>
   );
 };

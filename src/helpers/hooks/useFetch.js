@@ -21,8 +21,6 @@ export default function useFetch(slug, storage) {
 
   const { data, error } = useSWR(url, fetcher);
   // const loading = !error && !data
-  console.log(data, "data useFEETCH", slug);
-
   const { addFlow } = useStore();
 
   // onLoad or refresh should trigger useSWR hooks again, tolearn
@@ -36,6 +34,7 @@ export default function useFetch(slug, storage) {
       // const value = await store.get("flows");
       // setData(value);
       // todo: move to useFlow store, and keep this for payload section
+
       addFlow(data);
       setVersion(data?.currentVersion);
 
