@@ -104,7 +104,7 @@ export default ({
   }, [currentNodeWindow]);
 
   const [editStatus, setEditStatus] = useState<boolean>(isEdit);
-  // console.log(currentSource, elements, "elements WRAPPER", editStatus);
+  console.log(currentSource, elements, "elements WRAPPER", editStatus);
 
   return (
     <div className={lock ? `` : ``}>

@@ -5,9 +5,7 @@ import useFlow from "../store/useFlow";
 import {
   getProvider,
   localAbi,
-  localAddress,
-  maticAddress,
-  rinkebyAddress,
+  getAddress
 } from "../utils/networks";
 import useDynamicContract from "./useDynamicContract";
 
@@ -24,22 +22,10 @@ export default function useNodePool(nodeId?: string) {
 
   const { chainId: reservedChainId, key } = useFlow();
 
-  const getAddress = useCallback(() => {
-    switch (reservedChainId) {
-      case 137:
-        return maticAddress;
-      case 4:
-        return rinkebyAddress;
-      case 31337:
-        return localAddress;
 
-      default:
-        return localAddress;
-    }
-  }, [reservedChainId]);
 
   const _contract = useDynamicContract(
-    getAddress(),
+    getAddress(reservedChainId),
     localAbi,
     false,
     getProvider(reservedChainId)
@@ -47,16 +33,25 @@ export default function useNodePool(nodeId?: string) {
 
   useEffect(() => {
     _loadPoolData(nodeId);
-  }, [reservedChainId, nodeId, key]);
+    console.log('effect usenodepool')
+  }, []);
 
   // function getPoolTransactions(uint256 _projectId, string memory _nodeId)
-  const _loadPoolData = async (valueId: any) => {
+  const _loadPoolData = useCallback(async (valueId: any) => {
     if (!_contract) return null;
     setLoading(true);
+    console.log(_contract, getAddress(reservedChainId), typeof reservedChainId, 'reservedChainId',
+
+      Number(key), valueId,
+
+      typeof Number(key), typeof valueId
+
+    )
+
     try {
       const res = await _contract?.getPoolTransactions(Number(key), valueId);
 
-      console.log(res, "res?");
+      console.log(res, "res? loadpooldata");
       setPoolData(res);
 
       let sum = 0;
@@ -70,7 +65,7 @@ export default function useNodePool(nodeId?: string) {
 
       setTotalAmount(sum);
       setLoading(false);
-      console.log(sum, "sum before passed");
+      console.log(sum, "sum before passed usenodepool");
 
       return sum;
     } catch (error) {
@@ -78,12 +73,12 @@ export default function useNodePool(nodeId?: string) {
       setLoading(false);
       return 0;
     }
-  };
+  }, [_contract])
 
   return {
     poolData,
     loading,
     totalAmount,
     _loadPoolData,
-  };
+  }
 }

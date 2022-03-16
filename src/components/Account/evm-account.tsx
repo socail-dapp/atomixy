@@ -10,9 +10,10 @@ import { getNetworkName } from "@/helpers/utils/networks";
 
 type AccountProps = {
   triedToEagerConnect: boolean;
+  chainid: string | number;
 };
 
-const Account = ({ triedToEagerConnect }: AccountProps) => {
+const Account = ({ triedToEagerConnect, chainid: reservedChainId }: AccountProps) => {
   const { active, error, activate, chainId, account, setError } =
     useWeb3React();
 
@@ -71,9 +72,20 @@ const Account = ({ triedToEagerConnect }: AccountProps) => {
   }
 
   return (
-    <div className="flex m-2 row align-middle">
-      {console.log(getNetworkName(chainId), `getNetworkName(chainId)`)}
-      Network: {getNetworkName(chainId)} &nbsp; &nbsp; &nbsp; | &nbsp; &nbsp;
+    <div className="flex m-2 row align-middle ">
+      {console.log(getNetworkName(chainId), chainId, `getNetworkName(chainId)`, reservedChainId)}
+
+      {!!reservedChainId ?
+        Number(reservedChainId) === chainId ?
+          <div className="h-3 mt-1 mr-2 w-3 bg-green-300 rounded-full" /> :
+          <div className="h-3 mt-1 mr-2  w-3 bg-red-700 rounded-full" /> :
+        <div />
+      }
+
+      {!!reservedChainId ? `Connect to ${getNetworkName(Number(reservedChainId))}` : `Current Network: ${getNetworkName(chainId)}`}
+
+      &nbsp; &nbsp; &nbsp; | &nbsp; &nbsp;
+
       &nbsp;
       {/* check network metamask === with current flow network */}
       <a

@@ -100,7 +100,6 @@ export const DetailDisplay = ({ setEdit, detail }) => {
 
   const _contract = useSelectContract();
   const { key } = useFlow();
-  // console.log(_contract, 'USEELECT')
   // const parsedAmount = ethers.utils.parseEther("4")
 
   const onGrant = useCallback(async () => {
@@ -112,6 +111,14 @@ export const DetailDisplay = ({ setEdit, detail }) => {
     //   Number(key),
     //   detail?.id
     // )
+    console.log(_contract, 'USEELECT',
+
+      detail?.poolAddress,
+      ethers.utils.parseEther(String(amount)), //parsed
+      Number(key),
+      detail?.id
+    )
+
     try {
       const tx = await _contract?.sendMoney(
         detail?.poolAddress,
@@ -129,7 +136,7 @@ export const DetailDisplay = ({ setEdit, detail }) => {
     } catch (error) {
       console.log(error, "error grant");
       onClose();
-      alert("Something error");
+      alert("Something error, perhaps wrong network? or pool Address is empty?");
     }
   }, [_contract, key, amount, detail]);
 

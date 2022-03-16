@@ -322,7 +322,7 @@ export default function Control({
         window.history.replaceState(
           null,
           "",
-          `/flow/${storageID}?key=${key}&type=${storage_type}`
+          `/flow/${storageID}?key=${key}&type=${storage_type}&chainid=${chainId}`
         );
         // todo: refresh from useFetch
         // window.location.reload()

@@ -5,6 +5,7 @@ import {
   localAddress,
   maticAddress,
   rinkebyAddress,
+  getAddress
 } from "../utils/networks";
 import useDynamicContract from "./useDynamicContract";
 
@@ -18,21 +19,9 @@ import useDynamicContract from "./useDynamicContract";
 export default function useSelectContract() {
   const { chainId: walletChainId } = useWeb3React();
 
-  const getAddress = useCallback(() => {
-    switch (walletChainId) {
-      case 137:
-        return maticAddress;
-      case 4:
-        return rinkebyAddress;
-      case 31337:
-        return localAddress;
 
-      default:
-        return localAddress;
-    }
-  }, [walletChainId]);
 
-  const _contract = useDynamicContract(getAddress(), localAbi, true);
+  const _contract = useDynamicContract(getAddress(walletChainId), localAbi, true);
 
   // maticAddress
   // rinkebyAddress

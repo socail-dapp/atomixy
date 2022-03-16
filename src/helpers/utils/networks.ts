@@ -9,11 +9,43 @@ export const maticAddress = process.env.NEXT_PUBLIC_POLYGON_ADDRESS
 
 //testnet
 export const rinkebyAddress = process.env.NEXT_PUBLIC_RINKEBY_ADDRESS
-export const getRopsten = "";
-export const getGoerli = "";
-export const getKovan = "";
-export const getAvaxTest = "";
+// export const getRopsten = "";
+// export const getGoerli = "";
+export const kovanAddress = process.env.NEXT_PUBLIC_KOVAN_ADDRESS
+export const mumbaiAddress = process.env.NEXT_PUBLIC_POLYGON_TESTNET_ADDRESS
+// export const getAvaxTest = "";
 export const maticAbi = LocalToken.abi;
+
+console.log(mumbaiAddress, 'ADDRESS MUMBAI OWW')
+
+export const getAddress = (reservedChainId: number | string | undefined) => {
+  switch (reservedChainId) {
+    case '137':
+      return maticAddress;
+    case 137:
+      return maticAddress;
+    case '4':
+      return rinkebyAddress;
+    case 4:
+      return rinkebyAddress;
+    case '42':
+      return kovanAddress;
+    case 42:
+      return kovanAddress;
+    case '80001':
+      return mumbaiAddress;
+    case 80001:
+      return mumbaiAddress;
+    case '31337':
+      return localAddress;
+    case 31337:
+      return localAddress;
+
+    default:
+      return localAddress;
+  }
+}
+
 
 export const supportedChainIds = [
   1, 137,
@@ -22,29 +54,30 @@ export const supportedChainIds = [
   //local
   31337,
 ];
+
 // related to each other
 export const supportedNetwork = [
   `Mainnet`,
   `Polygon`,
-  //testnet
+  /**TESTNET */
   `Ropsten`,
   `Rinkeby`,
   `Goerli`,
   `Kovan`,
   `Mumbai`,
-  //local
+  /**LOCAL */
   `Local`,
 ];
 export const colorNetworkName = [
   `text-gray-700`,
   `text-purple-600`,
-  //testnet
+  /**TESTNET */
   `Ropsten`,
   `text-orange-300`,
   `Goerli`,
   `Kovan`,
   `Mumbai`,
-  //local
+  /**LOCAL */
   `text-green-400`,
 ];
 
@@ -71,6 +104,10 @@ export const getProvider = (chainId) => {
       return "https://polygon-rpc.com/";
     case 4:
       return "https://rinkeby.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161";
+    case 42:
+      return "https://kovan.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161";
+    case 80001:
+      return "https://rpc-mumbai.maticvigil.com";
     case 31337:
       return "http://127.0.0.1:8545/";
 
