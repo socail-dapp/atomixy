@@ -101,7 +101,9 @@ export default ({
         <div className="absolute w-screen flex flex-col sm:flex-row justify-between z-10 ">
           {/* dont remove to balance the space-between of 3 items */}
           <Search />
-          <HeaderWallet minimize />
+          <HeaderWallet minimize
+            {...{ chainid }}
+          />
 
           <ButtonVersions
             {...{

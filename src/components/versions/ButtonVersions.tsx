@@ -128,7 +128,7 @@ export default function ButtonVersions({
       window.history.replaceState(
         null,
         "",
-        `/flow/${storageID}?key=${key}&storage=${storage_type}`
+        `/flow/${storageID}?key=${key}&storage=${storage_type}&chainid=${chainId}`
       );
 
       console.log(resultTx, "res");
